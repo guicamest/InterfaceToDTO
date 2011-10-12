@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sleepcamel.ifdtoutils</groupId>
+	<artifactId>parent</artifactId>
+	<packaging>pom</packaging>
+	<name>interface-dto-utils parent project</name>
+	 <version>1.0-SNAPSHOT</version>
+
+	<modules>
+		<module>core</module>
+		<module>generator</module>
+		<module>maven-plugin</module>
+		<module>InterfaceDTOUtils</module>
+	</modules>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>${maven-eclipse-plugin.version}</version>
+					<configuration>
+						<additionalProjectnatures>
+							<projectnature>org.maven.ide.eclipse.maven2Nature</projectnature>
+						</additionalProjectnatures>
+					</configuration>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<inherited>true</inherited>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+						<encoding>utf-8</encoding>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<properties>
+		<maven-eclipse-plugin.version>2.7</maven-eclipse-plugin.version>
+		<maven-resources-plugin.version>2.4.1</maven-resources-plugin.version>
+		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
+	</properties>
+</project>
