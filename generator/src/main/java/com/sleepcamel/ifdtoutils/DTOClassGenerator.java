@@ -70,9 +70,8 @@ public class DTOClassGenerator {
 		}
 		return (T) cc.toClass();
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 	
 	private static void addMethodsAndFields(CtClass cc, CtClass interfaceCtClass) throws CannotCompileException, NotFoundException {
@@ -149,7 +148,13 @@ public class DTOClassGenerator {
 	
 	public static String getDTOName(Class<?> class1, String dtoSubPackage) {
 		String packageName = class1.getPackage().getName();
-		String className = class1.getName().substring(class1.getName().indexOf(packageName)+packageName.length()+1);
+
+		if ( !dtoSubPackage.isEmpty() && !dtoSubPackage.startsWith(".") ){
+			dtoSubPackage = "." + dtoSubPackage;
+		}
+
+		String className = class1.getName();
+		className = className.substring(class1.getName().indexOf(packageName)+packageName.length()+1);
 		return packageName + dtoSubPackage + "." + className + SUFFIX;
 	}
 	

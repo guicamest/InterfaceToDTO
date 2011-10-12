@@ -1,4 +1,4 @@
-package com.sleepcamel.dtoUtils.json;
+package com.sleepcamel.ifdtoUtils.json;
 
 import java.util.List;
 

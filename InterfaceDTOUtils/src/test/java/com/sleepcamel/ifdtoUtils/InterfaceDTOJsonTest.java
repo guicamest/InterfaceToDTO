@@ -1,4 +1,4 @@
-package com.sleepcamel.dtoUtils;
+package com.sleepcamel.ifdtoUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -12,7 +12,8 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sleepcamel.dtoUtils.json.InterfaceDTOJsonUtils;
+import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
+import com.sleepcamel.ifdtoUtils.json.InterfaceDTOJsonUtils;
 
 public class InterfaceDTOJsonTest {
 

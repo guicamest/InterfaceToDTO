@@ -1,4 +1,4 @@
-package com.sleepcamel.dtoUtils;
+package com.sleepcamel.ifdtoUtils;
 
 class Triangle implements IDrawable{
 

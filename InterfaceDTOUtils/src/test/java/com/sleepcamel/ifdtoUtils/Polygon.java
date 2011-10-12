@@ -1,4 +1,4 @@
-package com.sleepcamel.dtoUtils;
+package com.sleepcamel.ifdtoUtils;
 
 import java.util.ArrayList;
 import java.util.List;

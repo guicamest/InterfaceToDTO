@@ -1,10 +1,12 @@
-package com.sleepcamel.dtoUtils;
+package com.sleepcamel.ifdtoUtils;
 
 import java.lang.reflect.Method;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
 
 public class InterfaceDTOTest {
 

@@ -1,4 +1,4 @@
-package com.sleepcamel.dtoUtils.json;
+package com.sleepcamel.ifdtoUtils.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.sleepcamel.dtoUtils.InterfaceDTOUtils;
+import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
 
 public class InterfaceDTOSerializerDeserializerCreator<T> implements JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>{

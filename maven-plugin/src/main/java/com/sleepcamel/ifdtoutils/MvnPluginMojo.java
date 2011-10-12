@@ -17,7 +17,6 @@ package com.sleepcamel.ifdtoutils;
  */
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -51,13 +50,14 @@ public class MvnPluginMojo extends AbstractMojo
 	public void execute() throws MojoExecutionException
     {
     	try {
-//    	getLog().info(System.getProperty("java.class.path"));
+
+    	if ( outputDirectory == null || !outputDirectory.exists() ){
+    		throw new MojoExecutionException("Class directory must exist");
+   		}
+
 		URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {outputDirectory.toURL()},getClass().getClassLoader());
 		Thread.currentThread().setContextClassLoader(urlClassLoader);
 
-    	if ( !outputDirectory.exists() ){
-    		return;
-    	}
     	Collection<File> listFiles = FileUtils.listFiles(outputDirectory, new String[]{"class"}, true);
     	for(File file:listFiles){
     		getLog().debug("\nClass found: "+file.getName());
@@ -78,19 +78,25 @@ public class MvnPluginMojo extends AbstractMojo
 					getLog().debug("Annotation found! Package of creation: "+annotation.packageSuffix());
 				}
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
     	}
-    	getLog().info("Found "+dtosToGenerate.size()+" interfaces to generate their DTOs...");
+    	
+    	getLog().info("Found "+dtosToGenerate.size()+" interfaces to generate their DTOs...\n");
+    	
     	for(Class<?> interfaceClass:dtosToGenerate){
-        	getLog().info("Generating dto for interface "+interfaceClass.getName()+"...");
-    		DTOClassGenerator.generateDTOForInterface(interfaceClass, interfaceClass.getAnnotation(ToDTO.class).packageSuffix(), outputDirectory.getAbsolutePath());
-    		getLog().info("DTO generated for interface "+interfaceClass.getName());
+    		String packageSuffix = interfaceClass.getAnnotation(ToDTO.class).packageSuffix();
+    		try{
+				Thread.currentThread().getContextClassLoader().loadClass(DTOClassGenerator.getDTOName(interfaceClass,packageSuffix));
+				getLog().info("DTO for interface "+interfaceClass.getName()+" exists, skipping generation\n");
+    		}catch(ClassNotFoundException e){
+    			getLog().info("Generating dto for interface "+interfaceClass.getName()+"...");
+				DTOClassGenerator.generateDTOForInterface(interfaceClass, packageSuffix, outputDirectory.getAbsolutePath());
+				getLog().info("DTO generated for interface "+interfaceClass.getName()+"\n");
+			}
     	}
 
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
+		} catch (Exception e1) {
+			throw new MojoExecutionException(e1.getMessage());
 		}
 
     }
