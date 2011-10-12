@@ -1,0 +1,80 @@
+InterfaceToDTO
+---------------
+
+The goal of this project is to help the developer in creating DTOs for the
+domain entities and filling their information.
+In order to do so, an Interface approach is used. The Inferface should provide
+the getters for the DTO's fields. DTO creation and information passing from
+the domain entity to the DTO is done by this utilities.
+
+Let's see an example:
+
+Suppose you have a class Person.java
+
+public class Person {
+
+	String name;
+	String lastName;
+	String avatarUrl;
+	.....
+}
+
+Now suppose you have a service that provides information about the person,
+but just some info, let's say full name and avatar.
+
+
+To do so, the developer would have to write a DTO:
+
+
+public class PersonBasicInfoDTO {
+
+	String fullName;
+	String avatarUrl;
+
+	// Getters and Setters
+}
+
+and in the moment of sending the info:
+
+Person john = ...;
+PersonBasicInfoDTO personBasicInfoDto = new PersonBasicInfoDTO();
+personBasicInfoDTO.setLastName(john.getName()+" "+john.getLastName());
+personBasicInfoDTO.setAvatarUrl(john.getAvatarUrl);
+
+
+Now, let's see what it would look like when using InterfaceToDTO utils:
+First, write the interface:
+
+public interface IPersonBasicInfo{
+	String getFullName();
+	String getAvatarUrl();
+}
+
+
+Second, make Person implement IPersonBasicInfo:
+
+public class Person implements IPersonBasicInfo{
+
+
+And finally,  in the moment of sending the info:
+
+Person john = ...;
+IPersonBasicInfo personBasicInfo = InterfaceDTOUtils.getFilledDto(IPersonBasicInfo.class, john);
+
+And that's it! This is just a simple example, but imagine what it would be to write the DTO and
+write the code to transfer the data between the objects if there were more properties to send :P
+
+
+Suppose the developer has another service that sends another DTO of the person, but with different info
+than the other one. Without InterfaceToDTO a bunch of repeated code would have to be written,
+but with these utils it'd just be:
+
+public class Person implements IPersonBasicInfo, IAnotherInterface
+
+and later,
+
+IAnotherInterface anotherInterfacePerson = InterfaceDTOUtils.getFilledDto(IAnotherInterface.class, john);
+
+Simple, and easy.
+
+
