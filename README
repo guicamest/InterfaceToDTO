@@ -78,3 +78,54 @@ IAnotherInterface anotherInterfacePerson = InterfaceDTOUtils.getFilledDto(IAnoth
 Simple, and easy.
 
 
+------------
+Maven Plugin
+------------
+
+The maven plugin helps you generate DTOs from Interfaces in compile time.
+To use it, you should import the core jar in your project and anotate
+the interfaces you want DTO's to be generated with @ToDTO.
+
+and add these lines to your project's POM:
+
+<build>
+		<plugins>
+		  <plugin>
+			<groupId>com.sleepcamel.ifdtoutils</groupId>
+			<artifactId>maven-plugin</artifactId>
+			<version>1.0-SNAPSHOT</version>
+            <executions>
+                <execution>
+           			<phase>process-classes</phase>
+					<goals>
+						<goal>java</goal>
+					</goals>
+                </execution>
+            </executions>
+		  </plugin>
+		</plugins>
+
+
+There's an example project in the example folder.
+For example, if you have an interface:
+
+public interface MyInterface {
+
+	// Some methods here
+
+}
+
+you can generate it's DTO class just by putting the @ToDTO annotation:
+
+@ToDTO()
+public interface MyInterface {
+
+	// Some methods here
+
+}
+
+------------------
+
+See the Downloads section to get the jars.
+
+
