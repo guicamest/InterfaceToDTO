@@ -64,4 +64,12 @@ public class InterfaceDTOJsonTest {
 		Assert.assertEquals(utilsDrawable.isHasSides(), gsonDrawable.isHasSides());
 		Assert.assertEquals(utilsDrawable.isHasSides(), drawable.isHasSides());
 	}
+	
+	@Test
+	public void testDeserializeEmptyJson(){
+		IDrawable gsonDrawable = InterfaceDTOJsonUtils.getGson(IDrawable.class).fromJson("{}", IDrawable.class);
+		Assert.assertNotNull(gsonDrawable);
+		Assert.assertEquals(0.0D, gsonDrawable.getArea());
+		Assert.assertEquals(false, gsonDrawable.isHasSides());
+	}
 }

@@ -3,6 +3,7 @@ package com.sleepcamel.ifdtoutils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javassist.CannotCompileException;
@@ -21,20 +22,20 @@ public class DTOClassGenerator {
 
 	private static final String SUFFIX = "DTO";
 
-	public static <T> T generateDTOForInterface(Class<T> interfaceClass) {
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass) {
 		return generateDTOForInterface(interfaceClass, "");
 	}
 	
-	public static <T> T generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage) {
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage) {
 		return generateDTOForInterface(interfaceClass, dtoSubPackage, Thread.currentThread().getContextClassLoader(), null);
 	}
 	
-	public static <T> T generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage, String outputDirectory) {
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage, String outputDirectory) {
 		return generateDTOForInterface(interfaceClass, dtoSubPackage, Thread.currentThread().getContextClassLoader(), outputDirectory);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> T generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage, ClassLoader classLoader, String outputDirectory) {
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage, ClassLoader classLoader, String outputDirectory) {
 		if ( dtoSubPackage == null ){
 			dtoSubPackage = "";
 		}
@@ -68,14 +69,14 @@ public class DTOClassGenerator {
 		}else{
 			cc.writeFile(outputDirectory);
 		}
-		return (T) cc.toClass();
+		return cc.toClass();
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}
 	}
 	
 	private static void addMethodsAndFields(CtClass cc, CtClass interfaceCtClass) throws CannotCompileException, NotFoundException {
-		for(CtMethod method:interfaceCtClass.getDeclaredMethods()){
+		for(CtMethod method:getInterfaceClassMethods(interfaceCtClass)){
 			if ( !isExportableMethod(method) ){
 				continue;
 			}
@@ -92,6 +93,24 @@ public class DTOClassGenerator {
 			
 			cc.addMethod(fieldMethod);
 		}
+	}
+
+	private static List<CtMethod> getInterfaceClassMethods(CtClass interfaceCtClass) {
+		List<CtMethod> methodsList = new ArrayList<CtMethod>();
+		methodsList.addAll(Arrays.asList(interfaceCtClass.getDeclaredMethods()));
+		try {
+			CtClass[] superclasses = interfaceCtClass.getInterfaces();
+			for(CtClass superInterfaceClass:superclasses){
+				List<CtMethod> interfaceClassMethods = getInterfaceClassMethods(superInterfaceClass);
+				for(CtMethod method:interfaceClassMethods){
+					if ( !methodsList.contains(method) ){
+						methodsList.add(method);
+					}
+				}
+			}
+		} catch (NotFoundException e) {
+		}
+		return methodsList;
 	}
 
 	private static CtField getFieldFromMethod(CtClass cc, CtMethod method) throws CannotCompileException, NotFoundException {
