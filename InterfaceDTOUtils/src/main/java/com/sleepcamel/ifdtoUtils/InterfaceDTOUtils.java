@@ -37,21 +37,30 @@ public class InterfaceDTOUtils {
 		}
 		return null;
 	}
-
-	public static <T> T getFilledDto(Class<T> interfaceClass, T object) {
+	
+	public static <T> T getFilledDto(Class<T> interfaceClass, T object, boolean generateForSameInterfaces) {
 		try{
-			return fillInstance(interfaceClass, object, getDto(interfaceClass));
+			return fillInstance(interfaceClass, object, getDto(interfaceClass), generateForSameInterfaces);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		return null;
 	}
+
+	public static <T> T getFilledDto(Class<T> interfaceClass, T object) {
+		return getFilledDto(interfaceClass, object, false);
+	}
 	
-	private static <T> T fillInstance(Class<T> interfaceClass, T source, T destiny) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NotFoundException {
+	@SuppressWarnings("unchecked")
+	private static <T> T fillInstance(Class<T> interfaceClass, T source, T destiny, boolean recursively) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NotFoundException {
 		Class<? extends Object> destinyClass = destiny.getClass();
 		for(Method method:DTOClassGenerator.getExportableMethods(interfaceClass) ){
 			Field field = destinyClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(method.getName()));
-			field.set(destiny, method.invoke(source));
+			Object fieldValue = method.invoke(source);
+			if ( recursively && field.getType().equals(interfaceClass) && fieldValue != null ){
+				fieldValue = getFilledDto(interfaceClass, (T)fieldValue, recursively);
+			}
+			field.set(destiny, fieldValue);
 		}
 		return destiny;
 	}

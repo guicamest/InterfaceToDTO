@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
+import com.sleepcamel.ifdtoutils.DTOClassGenerator;
 
 public class InterfaceDTOTest {
 
@@ -40,4 +41,23 @@ public class InterfaceDTOTest {
 		Assert.assertEquals(drawableSquare.isHasSides(), square.isHasSides());
 	}
 
+	@Test
+	public void testFillDTOsWithSameInterface(){
+		Node father = new Node();
+		Node child = new Node();
+		Node intermediate = new Node(father, child);
+		father.setChild(intermediate);
+		child.setFather(intermediate);
+		
+		INode node = InterfaceDTOUtils.getFilledDto(INode.class, intermediate, true);
+		
+		String dtoClassName = DTOClassGenerator.getDTOName(INode.class, "");
+
+		Assert.assertEquals(node.getClass().getName(), dtoClassName);
+
+		Assert.assertEquals(node.getChild().getClass().getName(), Node.class.getName());
+
+		String fatherClassName = node.getFather().getClass().getName();
+		Assert.assertTrue(fatherClassName.equals(dtoClassName));
+	}
 }

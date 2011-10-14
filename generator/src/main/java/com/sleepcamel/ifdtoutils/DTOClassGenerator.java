@@ -13,7 +13,6 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
-import javassist.CtNewMethod;
 import javassist.CtPrimitiveType;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
@@ -87,7 +86,7 @@ public class DTOClassGenerator {
 			cc.addField(field);
 
 			// Copy Interface Method
-			CtMethod fieldMethod = CtNewMethod.copy(method, cc, null);
+			CtMethod fieldMethod = new CtMethod(method.getReturnType(), method.getName(), method.getParameterTypes(), cc);
 			fieldMethod.setModifiers(fieldMethod.getModifiers() - Modifier.ABSTRACT);
 			fieldMethod.setBody("return "+field.getName()+";");
 			
