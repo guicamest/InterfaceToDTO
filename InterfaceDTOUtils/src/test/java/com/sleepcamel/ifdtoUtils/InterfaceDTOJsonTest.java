@@ -72,4 +72,5 @@ public class InterfaceDTOJsonTest {
 		Assert.assertEquals(0.0D, gsonDrawable.getArea());
 		Assert.assertEquals(false, gsonDrawable.isHasSides());
 	}
+
 }

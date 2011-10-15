@@ -13,14 +13,7 @@ import com.sleepcamel.ifdtoutils.DTOClassGenerator;
 
 public class InterfaceDTOUtils {
 
-	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object) {
-		List<T> dtos = new ArrayList<T>();
-		Iterator<T> iterator = object.iterator();
-		while(iterator.hasNext()){
-			dtos.add(getFilledDto(interfaceClass, iterator.next()));
-		}
-		return dtos;
-	}
+	private InterfaceDTOUtils(){}
 	
 	@SuppressWarnings("unchecked")
 	public static <T> T getDto(Class<T> interfaceClass) {
@@ -38,6 +31,23 @@ public class InterfaceDTOUtils {
 		return null;
 	}
 	
+	public static <T> T getFilledDto(Class<T> interfaceClass, T object) {
+		return getFilledDto(interfaceClass, object, false);
+	}
+	
+	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object) {
+		return getFilledDtos(interfaceClass, object, false);
+	}
+	
+	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object, boolean generateForSameInterfaces) {
+		List<T> dtos = new ArrayList<T>();
+		Iterator<T> iterator = object.iterator();
+		while(iterator.hasNext()){
+			dtos.add(getFilledDto(interfaceClass, iterator.next(), generateForSameInterfaces));
+		}
+		return dtos;
+	}
+	
 	public static <T> T getFilledDto(Class<T> interfaceClass, T object, boolean generateForSameInterfaces) {
 		try{
 			return fillInstance(interfaceClass, object, getDto(interfaceClass), generateForSameInterfaces);
@@ -45,10 +55,6 @@ public class InterfaceDTOUtils {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public static <T> T getFilledDto(Class<T> interfaceClass, T object) {
-		return getFilledDto(interfaceClass, object, false);
 	}
 	
 	@SuppressWarnings("unchecked")

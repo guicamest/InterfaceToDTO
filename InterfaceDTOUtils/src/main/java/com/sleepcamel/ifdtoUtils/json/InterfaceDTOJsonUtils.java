@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 
 public class InterfaceDTOJsonUtils {
 
+	private InterfaceDTOJsonUtils(){}
+	
 	public static <T> GsonBuilder getGsonBuilder(Class<T> interfaceClass) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(interfaceClass, new InterfaceDTOSerializerDeserializerCreator<T>());

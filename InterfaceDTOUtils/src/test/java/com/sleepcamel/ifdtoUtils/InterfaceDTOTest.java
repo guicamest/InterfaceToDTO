@@ -1,6 +1,10 @@
 package com.sleepcamel.ifdtoUtils;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -59,5 +63,28 @@ public class InterfaceDTOTest {
 
 		String fatherClassName = node.getFather().getClass().getName();
 		Assert.assertTrue(fatherClassName.equals(dtoClassName));
+	}
+	
+	@Test
+	public void testIterableOfDTOs(){
+		List<IDrawable> drawables = new ArrayList<IDrawable>();
+		for(int i=0; i<30; i++){
+			drawables.add(new Square(1.2D));
+			drawables.add(new Circle(1.3D));
+			drawables.add(new Polygon(Arrays.asList(new Double[]{2.0D, 4.0D, -0.3D})));
+			drawables.add(new Triangle(30.0D, 18.0D, 24.0D));
+		}
+		
+		Iterable<IDrawable> dtoDrawables = InterfaceDTOUtils.getFilledDtos(IDrawable.class, drawables);
+		
+		Iterator<IDrawable> iterator = drawables.iterator();
+		Iterator<IDrawable> iterator2 = dtoDrawables.iterator();
+		
+		while(iterator.hasNext()){
+			IDrawable next = iterator.next();
+			IDrawable next2 = iterator2.next();
+			Assert.assertEquals(next.getArea(), next2.getArea());
+			Assert.assertEquals(next.isHasSides(), next2.isHasSides());	
+		}
 	}
 }
