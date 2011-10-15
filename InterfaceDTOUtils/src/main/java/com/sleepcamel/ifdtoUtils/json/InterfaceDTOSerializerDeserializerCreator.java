@@ -14,13 +14,14 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
+import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
 
 public class InterfaceDTOSerializerDeserializerCreator<T> implements JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>{
 
 	@Override
 	public JsonElement serialize(T object, Type typeOfArg, JsonSerializationContext context) {
 		JsonObject jsonObject = new JsonObject();
-		for(Method method:DTOClassGenerator.getExportableMethods((Class<?>) typeOfArg) ){
+		for(Method method:InterfaceJavaMethodsUtil.instance().getExportableMethods((Class<?>) typeOfArg) ){
 			Object fieldValue = null;
 			method.setAccessible(true);
 			try {fieldValue = method.invoke(object);} catch (Exception e) {e.printStackTrace();}

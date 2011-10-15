@@ -1,10 +1,6 @@
 package com.sleepcamel.ifdtoutils;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -13,7 +9,6 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
-import javassist.CtPrimitiveType;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 
@@ -75,11 +70,7 @@ public class DTOClassGenerator {
 	}
 	
 	private static void addMethodsAndFields(CtClass cc, CtClass interfaceCtClass) throws CannotCompileException, NotFoundException {
-		for(CtMethod method:getInterfaceClassMethods(interfaceCtClass)){
-			if ( !isExportableMethod(method) ){
-				continue;
-			}
-			
+		for(CtMethod method:InterfaceJavassistMethodsUtil.instance().getExportableMethods(interfaceCtClass)){
 			// Get Field
 			CtField field = getFieldFromMethod(cc,method);
 			field.setModifiers(field.getModifiers() | Modifier.PUBLIC);
@@ -93,25 +84,7 @@ public class DTOClassGenerator {
 			cc.addMethod(fieldMethod);
 		}
 	}
-
-	private static List<CtMethod> getInterfaceClassMethods(CtClass interfaceCtClass) {
-		List<CtMethod> methodsList = new ArrayList<CtMethod>();
-		methodsList.addAll(Arrays.asList(interfaceCtClass.getDeclaredMethods()));
-		try {
-			CtClass[] superclasses = interfaceCtClass.getInterfaces();
-			for(CtClass superInterfaceClass:superclasses){
-				List<CtMethod> interfaceClassMethods = getInterfaceClassMethods(superInterfaceClass);
-				for(CtMethod method:interfaceClassMethods){
-					if ( !methodsList.contains(method) ){
-						methodsList.add(method);
-					}
-				}
-			}
-		} catch (NotFoundException e) {
-		}
-		return methodsList;
-	}
-
+	
 	private static CtField getFieldFromMethod(CtClass cc, CtMethod method) throws CannotCompileException, NotFoundException {
 		return new CtField(method.getReturnType(), getFieldNameFromMethod(method.getName()), cc);
 	}
@@ -127,43 +100,6 @@ public class DTOClassGenerator {
 		return name;
 	}
 
-
-	private static boolean isExportableMethod(CtMethod method) throws NotFoundException{
-		// Skip methods with parameters
-		if ( method.getParameterTypes().length != 0 ){
-			return false;
-		}
-		
-		// Skip methods with void return type
-		if ( method.getReturnType().equals(CtPrimitiveType.voidType) ){
-			return false;
-		}
-		return true;
-	}
-	
-	public static List<Method> getExportableMethods(Class<?> interfaceClass){
-		List<Method> methods = new ArrayList<Method>();
-		for(Method method:interfaceClass.getDeclaredMethods()){
-			if ( isExportableMethod(method) ){
-				methods.add(method);
-			}
-		}
-		return methods;
-	}
-	
-	public static boolean isExportableMethod(Method method){
-		// Skip methods with parameters
-		if ( method.getParameterTypes().length != 0 ){
-			return false;
-		}
-		
-		// Skip methods with void return type
-		if ( method.getReturnType().equals(void.class) ){
-			return false;
-		}
-		return true;
-	}
-	
 	public static String getDTOName(Class<?> class1, String dtoSubPackage) {
 		String packageName = class1.getPackage().getName();
 

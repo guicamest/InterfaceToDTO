@@ -1,5 +1,8 @@
 package com.sleepcamel.ifdtoUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -10,19 +13,11 @@ public class InterfaceDTOBuilder<E> {
 
 	private Class<E> interfaceClass;
 	private boolean recursive = false;
+	private List<Class<?>> otherInterfaces = new ArrayList<Class<?>>();
 
-	public static <T> InterfaceDTOBuilder<T> builder(Class<T> interfaceClass){
-		return new InterfaceDTOBuilder<T>(interfaceClass);
-	}
-	
 	private InterfaceDTOBuilder(Class<E> interfaceClass){
 		this.interfaceClass = interfaceClass;
 		validateInterfaceClass(interfaceClass);
-	}
-	
-	public InterfaceDTOBuilder<E> recursive(boolean recursive){
-		this.recursive = recursive;
-		return this;
 	}
 	
 	private void validateInterfaceClass(Class<?> interfaceClass) {
@@ -34,18 +29,34 @@ public class InterfaceDTOBuilder<E> {
 		}
 	}
 	
+	public static <T> InterfaceDTOBuilder<T> builder(Class<T> interfaceClass){
+		return new InterfaceDTOBuilder<T>(interfaceClass);
+	}
+	
+	public InterfaceDTOBuilder<E> recursive(boolean recursive){
+		this.recursive = recursive;
+		return this;
+	}
+	
+	public InterfaceDTOBuilder<E> add(Class<?> interfaceClass) {
+		if ( !otherInterfaces.contains(interfaceClass) ){
+			otherInterfaces.add(interfaceClass);
+		}
+		return this;
+	}
+	
 	public E dto(E object){
 		if ( object == null ){
 			return null;
 		}
-		return InterfaceDTOUtils.getFilledDto(interfaceClass, object, recursive);
+		return InterfaceDTOUtils.getFilledDto(interfaceClass, object, recursive, otherInterfaces);
 	}
 	
 	public Iterable<E> dto(Iterable<E> objects) {
 		if ( objects == null ){
 			return null;
 		}
-		return InterfaceDTOUtils.getFilledDtos(interfaceClass, objects, recursive);
+		return InterfaceDTOUtils.getFilledDtos(interfaceClass, objects, recursive, otherInterfaces);
 	}
 	
 	public GsonBuilder gsonBuilder() {
@@ -67,5 +78,5 @@ public class InterfaceDTOBuilder<E> {
 	public <T> InterfaceDTOJsonBuilder<T> withToken(TypeToken<T> tt){
 		return InterfaceDTOJsonBuilder.withToken(gson(),tt);
 	}
-	
+
 }

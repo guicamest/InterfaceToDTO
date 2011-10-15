@@ -98,7 +98,7 @@ public class DTOClassGeneratorTest {
 	
 	@Test
 	public void testGenerateDTOWithNonExportableMethods(){
-		Assert.assertEquals(1, DTOClassGenerator.getExportableMethods(InterfaceWithNonExportableMethods.class).size());
+		Assert.assertEquals(1, InterfaceJavaMethodsUtil.instance().getExportableMethods(InterfaceWithNonExportableMethods.class).size());
 		
 		Class<InterfaceWithNonExportableMethods> generatedDTOClass = DTOClassGenerator.generateDTOForInterface(InterfaceWithNonExportableMethods.class);
 		Field[] declaredFields = generatedDTOClass.getDeclaredFields();

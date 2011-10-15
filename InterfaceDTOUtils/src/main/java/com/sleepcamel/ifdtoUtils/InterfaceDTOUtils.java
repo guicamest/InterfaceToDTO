@@ -9,6 +9,7 @@ import java.util.List;
 import javassist.NotFoundException;
 
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
+import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
 
 
 public class InterfaceDTOUtils {
@@ -31,26 +32,18 @@ public class InterfaceDTOUtils {
 		return null;
 	}
 	
-	public static <T> T getFilledDto(Class<T> interfaceClass, T object) {
-		return getFilledDto(interfaceClass, object, false);
-	}
-	
-	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object) {
-		return getFilledDtos(interfaceClass, object, false);
-	}
-	
-	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object, boolean generateForSameInterfaces) {
+	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object, boolean generateForSameInterfaces, List<Class<?>> interfaceList) {
 		List<T> dtos = new ArrayList<T>();
 		Iterator<T> iterator = object.iterator();
 		while(iterator.hasNext()){
-			dtos.add(getFilledDto(interfaceClass, iterator.next(), generateForSameInterfaces));
+			dtos.add(getFilledDto(interfaceClass, iterator.next(), generateForSameInterfaces, interfaceList));
 		}
 		return dtos;
 	}
 	
-	public static <T> T getFilledDto(Class<T> interfaceClass, T object, boolean generateForSameInterfaces) {
+	public static <T> T getFilledDto(Class<T> interfaceClass, T object, boolean generateForSameInterfaces, List<Class<?>> interfaceList) {
 		try{
-			return fillInstance(interfaceClass, object, getDto(interfaceClass), generateForSameInterfaces);
+			return fillInstance(interfaceClass, object, getDto(interfaceClass), generateForSameInterfaces, interfaceList );
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -58,17 +51,42 @@ public class InterfaceDTOUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static <T> T fillInstance(Class<T> interfaceClass, T source, T destiny, boolean recursively) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NotFoundException {
+	private static <T> T fillInstance(Class<T> interfaceClass, T source, T destiny, boolean recursively, List<Class<?>> interfaceList) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NotFoundException {
 		Class<? extends Object> destinyClass = destiny.getClass();
-		for(Method method:DTOClassGenerator.getExportableMethods(interfaceClass) ){
+		for(Method method:InterfaceJavaMethodsUtil.instance().getExportableMethods(interfaceClass) ){
+			
 			Field field = destinyClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(method.getName()));
 			Object fieldValue = method.invoke(source);
-			if ( recursively && field.getType().equals(interfaceClass) && fieldValue != null ){
-				fieldValue = getFilledDto(interfaceClass, (T)fieldValue, recursively);
+			
+			if (fieldValue != null){
+				Class<T> interfaceClassToUse = null;
+
+				if ( recursively && field.getType().equals(interfaceClass) ){
+					interfaceClassToUse = interfaceClass;
+				}else{
+					interfaceClassToUse = findMatchingInterfaceForField(field.getType(), interfaceList);
+				}
+
+				if ( interfaceClassToUse != null ){
+					fieldValue = getFilledDto(interfaceClassToUse, (T)fieldValue, recursively, interfaceList);
+				}
 			}
+			
 			field.set(destiny, fieldValue);
+
 		}
 		return destiny;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> Class<T> findMatchingInterfaceForField(Class<?> type, List<Class<?>> interfaceList) {
+		if ( !interfaceList.isEmpty() ){
+			for(Class<?> interfaceClass:interfaceList){
+				if ( interfaceClass.isAssignableFrom(type) )
+					return (Class<T>) interfaceClass;
+			}
+		}
+		return null;
 	}
 
 }

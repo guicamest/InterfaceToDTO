@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
 import com.sleepcamel.ifdtoUtils.json.InterfaceDTOJsonUtils;
 
 public class InterfaceDTOJsonTest {
@@ -27,7 +26,7 @@ public class InterfaceDTOJsonTest {
 			drawables.add(new Triangle(30.0D, 18.0D, 24.0D));
 		}
 
-		String dtoSerialization = new Gson().toJson(InterfaceDTOUtils.getFilledDtos(IDrawable.class, drawables));
+		String dtoSerialization = new Gson().toJson(InterfaceDTOBuilder.builder(IDrawable.class).dto(drawables));
 		
 		Type listType = new TypeToken<List<IDrawable>>() {}.getType();
 		String gsonSerialization = InterfaceDTOJsonUtils.getGson(IDrawable.class).toJson(drawables, listType);
