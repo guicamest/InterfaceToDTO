@@ -11,4 +11,6 @@ public @interface ToDTO {
 	String packageSuffix() default "";
 	
 	String fullPackage() default "";
+	
+	String dtoSuffix() default "";
 }

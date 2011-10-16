@@ -51,10 +51,15 @@ public class InterfaceDTOInfo<T> {
 	}
 
 	private String getDTOClassName() {
-//		String packageName = interfaceClass.getPackage().getName();
 		String className = interfaceClass.getName();
+		
+		String suffixToUse = SUFFIX;
+		ToDTO annotation = interfaceClass.getAnnotation(ToDTO.class);
+		if ( annotation != null && annotation.dtoSuffix() != null && !annotation.dtoSuffix().isEmpty() ){
+			suffixToUse = annotation.dtoSuffix();
+		}
 
-		className = ClassUtils.getClassNameFromFullPackage(className) + SUFFIX;
+		className = ClassUtils.getClassNameFromFullPackage(className) + suffixToUse;
 		
 		return className;
 	}

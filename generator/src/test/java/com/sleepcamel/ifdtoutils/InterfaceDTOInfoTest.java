@@ -10,11 +10,17 @@ public class InterfaceDTOInfoTest {
 		InterfaceDTOInfo<String> info = InterfaceDTOInfo.getInfo(String.class);
 		Assert.assertEquals(info.getDTOCanonicalName(), "java.lang.StringDTO");
 	}
-	
+
 	@Test
 	public void testInterfaceWithPackageSuffix(){
 		InterfaceDTOInfo<InterfaceWithPackageSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithPackageSuffix.class);
 		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.dtoPackage.InterfaceWithPackageSuffixDTO");
+	}
+	
+	@Test
+	public void testInterfaceWithDTOSuffix(){
+		InterfaceDTOInfo<InterfaceWithDtoSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithDtoSuffix.class);
+		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.InterfaceWithDtoSuffix"+InterfaceWithDtoSuffix.class.getAnnotation(ToDTO.class).dtoSuffix());
 	}
 	
 	@Test
