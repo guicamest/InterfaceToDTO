@@ -14,6 +14,7 @@ public class InterfaceDTOBuilder<E> {
 	private Class<E> interfaceClass;
 	private boolean recursive = false;
 	private List<Class<?>> otherInterfaces = new ArrayList<Class<?>>();
+	private boolean useFullPackage = false;
 
 	private InterfaceDTOBuilder(Class<E> interfaceClass){
 		this.interfaceClass = interfaceClass;
@@ -38,6 +39,11 @@ public class InterfaceDTOBuilder<E> {
 		return this;
 	}
 	
+	public InterfaceDTOBuilder<E> useFullPackage(){
+		this.useFullPackage  = true;
+		return this;
+	}
+	
 	public InterfaceDTOBuilder<E> add(Class<?> interfaceClass) {
 		if ( interfaceClass.isInterface() && !otherInterfaces.contains(interfaceClass) ){
 			otherInterfaces.add(interfaceClass);
@@ -49,14 +55,14 @@ public class InterfaceDTOBuilder<E> {
 		if ( object == null ){
 			return null;
 		}
-		return InterfaceDTOUtils.getFilledDto(interfaceClass, object, recursive, otherInterfaces);
+		return InterfaceDTOUtils.getFilledDto(interfaceClass, object, recursive, otherInterfaces, useFullPackage);
 	}
 	
 	public Iterable<E> dto(Iterable<E> objects) {
 		if ( objects == null ){
 			return null;
 		}
-		return InterfaceDTOUtils.getFilledDtos(interfaceClass, objects, recursive, otherInterfaces);
+		return InterfaceDTOUtils.getFilledDtos(interfaceClass, objects, recursive, otherInterfaces, useFullPackage);
 	}
 	
 	public GsonBuilder gsonBuilder() {

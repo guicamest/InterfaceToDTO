@@ -44,6 +44,31 @@ public class InterfaceDTOBuilderGenerationTest {
 	}
 	
 	@Test
+	public void testEntityTypeIsGeneratedOK(){
+		Bass bass = new Bass();
+		MusicInstrument bassDto = InterfaceDTOBuilder.builder(MusicInstrument.class).dto(bass);
+		Assert.assertEquals(bassDto.getEntityType(),"BASS");
+		
+		Guitar guitar = new Guitar();
+		MusicInstrument guitarDto = InterfaceDTOBuilder.builder(MusicInstrument.class).dto(guitar);
+		Assert.assertEquals("Guitar", guitarDto.getEntityType());
+		
+		Keyboard keyboard = new Keyboard();
+		MusicInstrument keyboardDto = InterfaceDTOBuilder.builder(MusicInstrument.class).dto(keyboard);
+		Assert.assertEquals("Keyboard", keyboardDto.getEntityType());
+		
+		guitarDto = InterfaceDTOBuilder.builder(MusicInstrument.class)
+										.useFullPackage()
+										.dto(guitar);
+		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Guitar", guitarDto.getEntityType());
+		
+		keyboardDto = InterfaceDTOBuilder.builder(MusicInstrument.class)
+										.useFullPackage()
+										.dto(keyboard);
+		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keyboardDto.getEntityType());
+	}
+	
+	@Test
 	public void testRecursionIsSame(){
 		Node father = new Node();
 		Node child = new Node();

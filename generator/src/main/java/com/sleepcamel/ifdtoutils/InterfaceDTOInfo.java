@@ -1,12 +1,12 @@
 package com.sleepcamel.ifdtoutils;
 
+import com.sleepcamel.ifdtoutils.utils.ClassUtils;
+
 
 public class InterfaceDTOInfo<T> {
 
 	private static final String SUFFIX = "DTO";
 
-	private static final String PACKAGE_SEPARATOR = ".";
-	
 	private Class<T> interfaceClass;
 
 	private InterfaceDTOInfo(Class<T> interfaceClass) {
@@ -27,7 +27,7 @@ public class InterfaceDTOInfo<T> {
 		
 		subpackageName = normalizePackage(subpackageName);
 		if ( !subpackageName.isEmpty() ){
-			subpackageName = PACKAGE_SEPARATOR + subpackageName;
+			subpackageName = ClassUtils.PACKAGE_SEPARATOR + subpackageName;
 		}
 
 		return packageName + subpackageName;
@@ -47,16 +47,16 @@ public class InterfaceDTOInfo<T> {
 	}
 
 	private String getDTOClassName() {
-		String packageName = interfaceClass.getPackage().getName();
+//		String packageName = interfaceClass.getPackage().getName();
 		String className = interfaceClass.getName();
-		
-		className = className.substring(className.indexOf(packageName)+packageName.length()+1) + SUFFIX;
+
+		className = ClassUtils.getClassNameFromFullPackage(className) + SUFFIX;
 		
 		return className;
 	}
 
 	public String getDTOCanonicalName() {
-		return getDTOPackage() + PACKAGE_SEPARATOR + getDTOClassName();
+		return getDTOPackage() + ClassUtils.PACKAGE_SEPARATOR + getDTOClassName();
 	}
 
 }
