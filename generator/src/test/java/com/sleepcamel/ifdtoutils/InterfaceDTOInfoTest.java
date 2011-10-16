@@ -12,14 +12,20 @@ public class InterfaceDTOInfoTest {
 	}
 	
 	@Test
-	public void testInterfaceHasToDTO(){
-		InterfaceDTOInfo<InterfaceWithToDTOAnnotation> info = InterfaceDTOInfo.getInfo(InterfaceWithToDTOAnnotation.class);
-		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.dtoPackage.InterfaceWithToDTOAnnotationDTO");
+	public void testInterfaceWithPackageSuffix(){
+		InterfaceDTOInfo<InterfaceWithPackageSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithPackageSuffix.class);
+		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.dtoPackage.InterfaceWithPackageSuffixDTO");
+	}
+	
+	@Test
+	public void testInterfaceWithFullPackage(){
+		InterfaceDTOInfo<InterfaceWithFullPackage> info = InterfaceDTOInfo.getInfo(InterfaceWithFullPackage.class);
+		Assert.assertEquals(info.getDTOCanonicalName(), InterfaceWithFullPackage.class.getAnnotation(ToDTO.class).fullPackage()+".InterfaceWithFullPackageDTO");
 	}
 	
 	@Test
 	public void testNormalizeSubpackage(){
-		InterfaceDTOInfo<InterfaceWithToDTOAnnotation> info = InterfaceDTOInfo.getInfo(InterfaceWithToDTOAnnotation.class);
+		InterfaceDTOInfo<InterfaceWithPackageSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithPackageSuffix.class);
 		Assert.assertEquals(info.normalizePackage(".lala"),"lala");
 		Assert.assertEquals(info.normalizePackage("aswd"),"aswd");
 		Assert.assertEquals(info.normalizePackage("jkfr."),"jkfr");

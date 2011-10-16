@@ -22,6 +22,10 @@ public class InterfaceDTOInfo<T> {
 		String subpackageName = null;
 		ToDTO annotation = interfaceClass.getAnnotation(ToDTO.class);
 		if ( annotation != null ){
+			String fullPackage = annotation.fullPackage();
+			if ( fullPackage != null && !fullPackage.isEmpty() ){
+				return normalizePackage(fullPackage);
+			}
 			subpackageName = annotation.packageSuffix();
 		}
 		

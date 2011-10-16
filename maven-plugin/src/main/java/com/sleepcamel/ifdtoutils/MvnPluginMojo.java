@@ -75,7 +75,7 @@ public class MvnPluginMojo extends AbstractMojo
 					getLog().debug("No annotation not found :(");
 				}else{
 					dtosToGenerate.add(loadedClass);
-					getLog().debug("Annotation found! Package of creation: "+annotation.packageSuffix());
+					getLog().debug("Annotation found!");
 				}
 			} catch (ClassNotFoundException e) {
 			}
