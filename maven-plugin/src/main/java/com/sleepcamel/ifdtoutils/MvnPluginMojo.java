@@ -84,14 +84,14 @@ public class MvnPluginMojo extends AbstractMojo
     	getLog().info("Found "+dtosToGenerate.size()+" interfaces to generate their DTOs...\n");
     	
     	for(Class<?> interfaceClass:dtosToGenerate){
-    		String packageSuffix = interfaceClass.getAnnotation(ToDTO.class).packageSuffix();
+    		String interfaceClassName = interfaceClass.getName();
     		try{
-				Thread.currentThread().getContextClassLoader().loadClass(DTOClassGenerator.getDTOName(interfaceClass,packageSuffix));
-				getLog().info("DTO for interface "+interfaceClass.getName()+" exists, skipping generation\n");
+				Thread.currentThread().getContextClassLoader().loadClass(InterfaceDTOInfo.getInfo(interfaceClass).getDTOCanonicalName());
+				getLog().info("DTO for interface "+interfaceClassName+" exists, skipping generation\n");
     		}catch(ClassNotFoundException e){
-    			getLog().info("Generating dto for interface "+interfaceClass.getName()+"...");
-				DTOClassGenerator.generateDTOForInterface(interfaceClass, packageSuffix, outputDirectory.getAbsolutePath());
-				getLog().info("DTO generated for interface "+interfaceClass.getName()+"\n");
+    			getLog().info("Generating dto for interface "+interfaceClassName+"...");
+				DTOClassGenerator.generateDTOForInterface(interfaceClass, outputDirectory.getAbsolutePath());
+				getLog().info("DTO generated for interface "+interfaceClassName+"\n");
 			}
     	}
 

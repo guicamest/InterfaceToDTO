@@ -8,15 +8,6 @@ import org.junit.Test;
 
 
 public class DTOClassGeneratorTest {
-
-	@Test
-	public void testGetDTOName(){
-		Assert.assertEquals("java.lang.StringDTO", DTOClassGenerator.getDTOName(String.class, ""));
-		
-		Assert.assertEquals("java.lang.dtos.StringDTO", DTOClassGenerator.getDTOName(String.class, "dtos"));
-		
-		Assert.assertEquals("java.lang.dtos.StringDTO", DTOClassGenerator.getDTOName(String.class, ".dtos"));
-	}
 	
 	@Test
 	public void testGeneratedDTOContainsInterfaceMethods(){
@@ -91,7 +82,7 @@ public class DTOClassGeneratorTest {
 		
 		for(Method method:declaredMethods){
 			String name = method.getName();
-			boolean matchesMethod = name.equals("getSomething") || name.equals("getCoreField");
+			boolean matchesMethod = name.equals("something") || name.equals("getCoreField");
 			Assert.assertTrue(matchesMethod);
 		}
 	}

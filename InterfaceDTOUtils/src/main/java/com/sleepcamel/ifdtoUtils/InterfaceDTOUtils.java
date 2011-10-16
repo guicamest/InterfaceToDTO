@@ -9,6 +9,7 @@ import java.util.List;
 import javassist.NotFoundException;
 
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
+import com.sleepcamel.ifdtoutils.InterfaceDTOInfo;
 import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
 
 
@@ -21,7 +22,7 @@ public class InterfaceDTOUtils {
 		Class<T> dtoClass = null;
 		try{
 			try{
-				dtoClass = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(DTOClassGenerator.getDTOName(interfaceClass,""));
+				dtoClass = (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(InterfaceDTOInfo.getInfo(interfaceClass).getDTOCanonicalName());
 			}catch(ClassNotFoundException e){
 				dtoClass = (Class<T>) DTOClassGenerator.generateDTOForInterface(interfaceClass);
 			}

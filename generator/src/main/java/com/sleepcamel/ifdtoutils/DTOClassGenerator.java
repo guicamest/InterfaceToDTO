@@ -14,37 +14,23 @@ import javassist.NotFoundException;
 
 public class DTOClassGenerator {
 
-	private static final String SUFFIX = "DTO";
-
 	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass) {
-		return generateDTOForInterface(interfaceClass, "");
+		return generateDTOForInterface(interfaceClass, null);
 	}
 	
-	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage) {
-		return generateDTOForInterface(interfaceClass, dtoSubPackage, Thread.currentThread().getContextClassLoader(), null);
-	}
-	
-	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage, String outputDirectory) {
-		return generateDTOForInterface(interfaceClass, dtoSubPackage, Thread.currentThread().getContextClassLoader(), outputDirectory);
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String outputDirectory) {
+		return generateDTOForInterface(interfaceClass, Thread.currentThread().getContextClassLoader(), outputDirectory);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String dtoSubPackage, ClassLoader classLoader, String outputDirectory) {
-		if ( dtoSubPackage == null ){
-			dtoSubPackage = "";
-		}
-		
-		if ( !dtoSubPackage.isEmpty() ){
-			dtoSubPackage = "." + dtoSubPackage;
-		}
-
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, ClassLoader classLoader, String outputDirectory) {
 		try{
 		LoaderClassPath loaderClassPath = new LoaderClassPath(classLoader);
 			
 		ClassPool pool = ClassPool.getDefault();
 		pool.appendClassPath(loaderClassPath);
 
-		CtClass cc = pool.makeClass(getDTOName(interfaceClass, dtoSubPackage));
+		CtClass cc = pool.makeClass(InterfaceDTOInfo.getInfo(interfaceClass).getDTOCanonicalName());
 		
 		// Add default constructor, it's just a DTO
 		CtConstructor defaultConstructor = CtNewConstructor.defaultConstructor(cc);
@@ -98,18 +84,6 @@ public class DTOClassGenerator {
 			i++;
 		}
 		return name;
-	}
-
-	public static String getDTOName(Class<?> class1, String dtoSubPackage) {
-		String packageName = class1.getPackage().getName();
-
-		if ( !dtoSubPackage.isEmpty() && !dtoSubPackage.startsWith(".") ){
-			dtoSubPackage = "." + dtoSubPackage;
-		}
-
-		String className = class1.getName();
-		className = className.substring(class1.getName().indexOf(packageName)+packageName.length()+1);
-		return packageName + dtoSubPackage + "." + className + SUFFIX;
 	}
 	
 }

@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.sleepcamel.ifdtoutils.DTOClassGenerator;
+import com.sleepcamel.ifdtoutils.InterfaceDTOInfo;
 
 public class InterfaceDTOBuilderGenerationTest {
 
@@ -54,7 +54,7 @@ public class InterfaceDTOBuilderGenerationTest {
 		INode node = InterfaceDTOBuilder.builder(INode.class)
 						.recursive(true).dto(intermediate);
 		
-		String dtoClassName = DTOClassGenerator.getDTOName(INode.class, "");
+		String dtoClassName = InterfaceDTOInfo.getInfo(INode.class).getDTOCanonicalName();
 
 		Assert.assertEquals(node.getClass().getName(), dtoClassName);
 
@@ -131,11 +131,15 @@ public class InterfaceDTOBuilderGenerationTest {
 		Assert.assertEquals(generatedAvatar.getArea(), userAvatar.getArea(), 0);
 		Assert.assertEquals(generatedAvatar.isHasSides(), userAvatar.isHasSides());
 
-		// Now add INode
+		// Now add INode twice, one of them is discarded
+		// Add String and IGenerable also, they shouldn't have effect 
 		friendable = InterfaceDTOBuilder.builder(IUser.class)
 												.recursive(true)
 												.add(IDrawable.class)
 												.add(INode.class)
+												.add(INode.class)
+												.add(String.class)
+												.add(IGenerable.class)
 												.dto(user);
 
 		Assert.assertSame(friendable.getNode().getClass(), InterfaceDTOUtils.getDto(INode.class).getClass());

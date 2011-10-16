@@ -1,6 +1,9 @@
 package com.sleepcamel.ifdtoUtils;
 
-interface IDrawable{
+import com.sleepcamel.ifdtoutils.ToDTO;
+
+@ToDTO(packageSuffix="drawableDTOs")
+public interface IDrawable{
 	double getArea();
 	
 	boolean isHasSides();

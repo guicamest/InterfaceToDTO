@@ -39,7 +39,7 @@ public class InterfaceDTOBuilder<E> {
 	}
 	
 	public InterfaceDTOBuilder<E> add(Class<?> interfaceClass) {
-		if ( !otherInterfaces.contains(interfaceClass) ){
+		if ( interfaceClass.isInterface() && !otherInterfaces.contains(interfaceClass) ){
 			otherInterfaces.add(interfaceClass);
 		}
 		return this;

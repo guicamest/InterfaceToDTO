@@ -2,6 +2,6 @@ package com.sleepcamel.ifdtoutils;
 
 public interface InterfaceWithSameInheritedMethods extends CoreInterface, CoreInterfaceCopy {
 
-	String getSomething();
+	String something();
 	
 }

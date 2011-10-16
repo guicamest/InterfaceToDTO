@@ -1,5 +1,7 @@
 package com.sleepcamel.ifdtoUtils;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,6 +11,12 @@ public class InterfaceDTOBuilderTest {
 	public void testNullObject(){
 		Circle circle = null;
 		Assert.assertNull(InterfaceDTOBuilder.builder(IDrawable.class).dto(circle));
+	}
+	
+	@Test
+	public void testNullIterable(){
+		List<IDrawable> list = null;
+		Assert.assertNull(InterfaceDTOBuilder.builder(IDrawable.class).dto(list));
 	}
 	
 	@Test(expected=RuntimeException.class)
