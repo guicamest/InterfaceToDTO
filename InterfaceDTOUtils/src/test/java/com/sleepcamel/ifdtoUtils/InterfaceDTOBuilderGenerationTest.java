@@ -66,6 +66,11 @@ public class InterfaceDTOBuilderGenerationTest {
 										.useFullPackage()
 										.dto(keyboard);
 		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keyboardDto.getEntityType());
+		
+		MusicInstrumentWithKeys keysDto = InterfaceDTOBuilder.builder(MusicInstrumentWithKeys.class)
+										.useFullPackage()
+										.dto(keyboard);
+		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keysDto.getEntityType());
 	}
 	
 	@Test

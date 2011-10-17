@@ -1,6 +1,7 @@
 package com.sleepcamel.ifdtoutils;
 
-import com.sleepcamel.ifdtoutils.utils.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class InterfaceDTOInfo<T> {
@@ -23,14 +24,14 @@ public class InterfaceDTOInfo<T> {
 		ToDTO annotation = interfaceClass.getAnnotation(ToDTO.class);
 		if ( annotation != null ){
 			String fullPackage = annotation.fullPackage();
-			if ( fullPackage != null && !fullPackage.isEmpty() ){
+			if ( StringUtils.isNotBlank(fullPackage) ){
 				return normalizePackage(fullPackage);
 			}
 			subpackageName = annotation.packageSuffix();
 		}
 		
 		subpackageName = normalizePackage(subpackageName);
-		if ( !subpackageName.isEmpty() ){
+		if ( StringUtils.isNotBlank(subpackageName) ){
 			subpackageName = ClassUtils.PACKAGE_SEPARATOR + subpackageName;
 		}
 
@@ -38,9 +39,10 @@ public class InterfaceDTOInfo<T> {
 	}
 
 	protected String normalizePackage(String subpackageName) {
-		if ( subpackageName == null ){
+		if ( StringUtils.isBlank(subpackageName) ){
 			return "";
 		}
+
 		if ( subpackageName.startsWith(".") ){
 			subpackageName = subpackageName.substring(1);
 		}
@@ -52,14 +54,22 @@ public class InterfaceDTOInfo<T> {
 
 	private String getDTOClassName() {
 		String className = interfaceClass.getName();
-		
 		String suffixToUse = SUFFIX;
+
 		ToDTO annotation = interfaceClass.getAnnotation(ToDTO.class);
-		if ( annotation != null && annotation.dtoSuffix() != null && !annotation.dtoSuffix().isEmpty() ){
-			suffixToUse = annotation.dtoSuffix();
+		
+		if ( annotation != null ){
+			if ( StringUtils.isNotBlank(annotation.dtoName()) ){
+				className = annotation.dtoName();
+				suffixToUse = "";
+			}else{
+				if ( StringUtils.isNotBlank(annotation.dtoSuffix()) ){
+					suffixToUse = annotation.dtoSuffix();
+				}
+			}
 		}
 
-		className = ClassUtils.getClassNameFromFullPackage(className) + suffixToUse;
+		className = ClassUtils.getShortClassName(className) + suffixToUse;
 		
 		return className;
 	}

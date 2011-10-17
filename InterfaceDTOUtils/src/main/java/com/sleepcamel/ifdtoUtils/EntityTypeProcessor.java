@@ -2,8 +2,10 @@ package com.sleepcamel.ifdtoUtils;
 
 import java.lang.reflect.Method;
 
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.sleepcamel.ifdtoutils.DTOInterface;
-import com.sleepcamel.ifdtoutils.utils.ClassUtils;
 
 public class EntityTypeProcessor {
 
@@ -13,10 +15,10 @@ public class EntityTypeProcessor {
 
 	public static Object process(Object fieldValue, String className, boolean useFullPackage) {
 		Object toReturn = fieldValue;
-		if ( fieldValue == null || fieldValue.equals("") ){
+		if ( StringUtils.isBlank((CharSequence) fieldValue) ){
 			toReturn = className;
 			if ( !useFullPackage ){
-				toReturn = ClassUtils.getClassNameFromFullPackage(className);
+				toReturn = ClassUtils.getShortClassName(className);
 			}
 		}
 		return toReturn;

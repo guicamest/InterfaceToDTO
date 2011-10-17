@@ -2,6 +2,8 @@ package com.sleepcamel.ifdtoutils;
 
 import java.lang.reflect.Modifier;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -44,7 +46,7 @@ public class DTOClassGenerator {
 		addMethodsAndFields(cc, interfaceCtClass);
 
 		// Persist class
-		if ( outputDirectory == null || outputDirectory.isEmpty() ){
+		if ( StringUtils.isBlank(outputDirectory) ){
 			cc.writeFile();
 		}else{
 			cc.writeFile(outputDirectory);

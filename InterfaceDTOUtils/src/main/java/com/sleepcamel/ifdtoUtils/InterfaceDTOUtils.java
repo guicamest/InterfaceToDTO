@@ -33,7 +33,7 @@ public class InterfaceDTOUtils {
 		return null;
 	}
 	
-	public static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object, boolean generateForSameInterfaces, List<Class<?>> interfaceList, boolean useFullPackage) {
+	protected static <T> Iterable<T> getFilledDtos(Class<T> interfaceClass, Iterable<T> object, boolean generateForSameInterfaces, List<Class<?>> interfaceList, boolean useFullPackage) {
 		List<T> dtos = new ArrayList<T>();
 		Iterator<T> iterator = object.iterator();
 		while(iterator.hasNext()){
@@ -42,7 +42,7 @@ public class InterfaceDTOUtils {
 		return dtos;
 	}
 	
-	public static <T> T getFilledDto(Class<T> interfaceClass, T object, boolean generateForSameInterfaces, List<Class<?>> interfaceList, boolean useFullPackage) {
+	protected static <T> T getFilledDto(Class<T> interfaceClass, T object, boolean generateForSameInterfaces, List<Class<?>> interfaceList, boolean useFullPackage) {
 		try{
 			return fillInstance(interfaceClass, object, getDto(interfaceClass), generateForSameInterfaces, interfaceList, useFullPackage );
 		}catch(Exception e){
@@ -54,11 +54,7 @@ public class InterfaceDTOUtils {
 	@SuppressWarnings("unchecked")
 	private static <T> T fillInstance(Class<T> interfaceClass, T source, T destiny, boolean recursively, List<Class<?>> interfaceList, boolean useFullPackage) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NotFoundException {
 		Class<? extends Object> destinyClass = destiny.getClass();
-		Class<? extends Object> sourceClass = null;
-		
-		if ( source != null ){
-			sourceClass = source.getClass();
-		}
+		Class<? extends Object> sourceClass = source.getClass();
 		
 		for(Method method:InterfaceJavaMethodsUtil.instance().getExportableMethods(interfaceClass) ){
 			

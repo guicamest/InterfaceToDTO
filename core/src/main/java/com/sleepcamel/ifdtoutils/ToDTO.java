@@ -13,4 +13,6 @@ public @interface ToDTO {
 	String fullPackage() default "";
 	
 	String dtoSuffix() default "";
+	
+	String dtoName() default "";
 }
