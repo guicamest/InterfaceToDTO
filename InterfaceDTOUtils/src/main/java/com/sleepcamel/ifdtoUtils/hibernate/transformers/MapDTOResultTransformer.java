@@ -28,10 +28,9 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 	@Override
 	public List transformList(List paramList) {
 		Map<Object,Object> map = new HashMap<Object, Object>();
-		Entry<Integer, Class<?>> pair = keys.get(0);
+		
 		for(Object object:paramList){
-			T result = (T) object;
-			map.put(getObjectValue(pair.getKey(),result), object);
+			fillMapWithResult(map,(T) object);
 		}
 
 		List returnList = new ArrayList();
@@ -39,11 +38,34 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 		return returnList;
 	}
 
+	@SuppressWarnings("unchecked")
+	private void fillMapWithResult(Map<Object, Object> map, T result) {
+		int size = keys.size();
+		Map<Object, Object> lastMap = map;
+		for(int i=0; i < size; i++){
+			Entry<Integer, Class<?>> pair = keys.get(i);
+			Object keyToUse = getObjectValue(pair.getKey(),result);
+			
+			Object object = lastMap.get(keyToUse);
+			if ( i < keys.size() - 1 ){
+				if ( object == null ){
+					object = new HashMap<Object, Object>();
+					lastMap.put(keyToUse, object);
+				}
+				lastMap = (Map<Object, Object>) object;
+			}else{
+				lastMap.put(keyToUse, result);
+			}
+			
+		}
+	}
+
 	private Object getObjectValue(Integer methodIndex, T result) {
 		Class<? extends Object> dtoClass = result.getClass();
 		Method methodWithPosition = InterfaceJavaMethodsUtil.instance().getMethodWithPosition(dtoClass, methodIndex);
-		if ( methodWithPosition == null )
+		if ( methodWithPosition == null ){
 			throw new DTOUtilsException("Invalid index "+methodIndex);
+		}
 			
 		try{
 			return methodWithPosition.invoke(result);

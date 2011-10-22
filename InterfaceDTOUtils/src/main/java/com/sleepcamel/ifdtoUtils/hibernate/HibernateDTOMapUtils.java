@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 
+import com.sleepcamel.ifdtoUtils.exception.DTOUtilsException;
 import com.sleepcamel.ifdtoUtils.hibernate.transformers.MapDTOResultTransformer;
 
 public class HibernateDTOMapUtils<T,K,V> extends HibernateDTOUtils<T, Map<K,V>> {
@@ -28,7 +29,17 @@ public class HibernateDTOMapUtils<T,K,V> extends HibernateDTOUtils<T, Map<K,V>> 
 		return (Map<K,V>) query.list().get(0);
 	}
 	
-//	public <E> HibernateDTOMapUtils<T,E,Map<K,V>> key(Class<E> keyClass, int position) {
-//		return new HibernateDTOMapUtils<T,E,Map<K,V>>(interfaceClass);
-//	}
+	/* 
+	 * Don't USE!
+	 */
+	@Override
+	@Deprecated
+	public <E> HibernateDTOMapUtils<T, E, T> map(Class<E> keyClass, int position) {
+		throw new DTOUtilsException("Method must not be called");
+	}
+	
+	public <E> HibernateDTOMapUtils<T,E,Map<K,V>> key(Class<E> keyClass, int position) {
+		addKeyToList(keys, keyClass, position);
+		return new HibernateDTOMapUtils<T,E,Map<K,V>>(interfaceClass, keys);
+	}
 }

@@ -32,10 +32,8 @@ abstract public class BaseDTOResultTransformer<T> implements ResultTransformer {
 		// Fill fields
 		int i = 0;
 		List<Method> exportableMethods = InterfaceJavaMethodsUtil.instance().getExportableMethods(dtoClass, MethodPosComparator.instance());
+		exportableMethods = exportableMethods.subList(0, qty);
 		for(Method method:exportableMethods ){
-			if ( qty == i ){
-				break;
-			}
 			try {
 				Field field = dtoClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(method.getName()));
 				field.set(dto, selectObjects[i++]);

@@ -62,14 +62,6 @@ public class HibernateDTOUtilsTest {
 		assertDTO(USER_ID_WITH_LAST_NAME, next);
 	}
 	
-	@Test(expected=DTOUtilsException.class)
-	public void testInvalidMapIndex(){
-		String hql = "select user.name, user.avatar, user.location, user.lastName from User user";
-		Query query = session.createQuery(hql);
-		HibernateDTOUtils.getFor(ISimplifiedUser.class).map(Avatar.class,4)
-														.fromQuery(query);
-	}
-	
 	@Test
 	public void testNoResult(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.name = :noName";
@@ -134,6 +126,41 @@ public class HibernateDTOUtilsTest {
 		for(Entry<Avatar, ISimplifiedUser> entry:resultMap.entrySet()){
 			assertEquals(entry.getKey(), entry.getValue().getAvatar());
 		}
+	}
+	
+	@Test
+	public void testMapMultipleKeys(){
+		String hql = "select user.name, user.avatar, user.location from User user";
+		Query query = session.createQuery(hql);
+		Map<String, Map<Avatar, ISimplifiedUser>> resultMap = HibernateDTOUtils.getFor(ISimplifiedUser.class)
+														.map(Avatar.class,1)
+														.key(String.class,0)
+														.fromQuery(query);
+		assertEquals(resultMap.size(), 5);
+		for(Entry<String, Map<Avatar, ISimplifiedUser>> entry:resultMap.entrySet()){
+			assertEquals(entry.getValue().size(), 6);
+			for(Entry<Avatar, ISimplifiedUser> subEntry:entry.getValue().entrySet()){
+				assertEquals(subEntry.getKey(), subEntry.getValue().getAvatar());
+				assertEquals(entry.getKey(), subEntry.getValue().getName());
+			}
+		}
+	}
+	
+	@Test(expected=DTOUtilsException.class)
+	public void testInvalidMapIndex(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user";
+		Query query = session.createQuery(hql);
+		HibernateDTOUtils.getFor(ISimplifiedUser.class).map(Avatar.class,4)
+														.fromQuery(query);
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test(expected=DTOUtilsException.class)
+	public void testDontDoubleMap(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user";
+		Query query = session.createQuery(hql);
+		HibernateDTOUtils.getFor(ISimplifiedUser.class).map(Avatar.class,4).map(Avatar.class, 4)
+														.fromQuery(query);
 	}
 	
 	@Test

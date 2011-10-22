@@ -44,9 +44,13 @@ public class HibernateDTOUtils<T,RT> {
 		return new HibernateDTOMapUtils<T,E,T>(interfaceClass, getListFor(keyClass, position));
 	}
 
-	public List<Map.Entry<Integer,Class<?>>> getListFor(Class<?> keyClass, int position) {
+	private List<Map.Entry<Integer,Class<?>>> getListFor(Class<?> keyClass, int position) {
 		List<Map.Entry<Integer,Class<?>>> list = new ArrayList<Map.Entry<Integer,Class<?>>>();
-		list.add(new AbstractMap.SimpleEntry<Integer,Class<?>>(position, keyClass));
+		addKeyToList(list, keyClass, position);
 		return list;
+	}
+	
+	protected void addKeyToList(List<Map.Entry<Integer,Class<?>>> list, Class<?> keyClass, int position) {
+		list.add(0, new AbstractMap.SimpleEntry<Integer,Class<?>>(position, keyClass));
 	}
 }
