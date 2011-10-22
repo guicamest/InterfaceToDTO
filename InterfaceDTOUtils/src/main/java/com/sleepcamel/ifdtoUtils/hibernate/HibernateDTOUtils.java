@@ -1,5 +1,6 @@
 package com.sleepcamel.ifdtoUtils.hibernate;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -13,6 +14,7 @@ public class HibernateDTOUtils<T> {
 	}
 
 	private Class<T> interfaceClass;
+	private Comparator<T> resultComparator;
 
 	public HibernateDTOUtils(Class<T> interfaceClass) {
 		this.interfaceClass = interfaceClass;
@@ -20,8 +22,16 @@ public class HibernateDTOUtils<T> {
 
 	@SuppressWarnings("unchecked")
 	public List<T> fromQuery(Query query) {
-		query.setResultTransformer(new BaseDTOResultTransformer<T>(interfaceClass));
+		BaseDTOResultTransformer<T> baseDTOResultTransformer = new BaseDTOResultTransformer<T>(interfaceClass);
+		baseDTOResultTransformer.setComparator(resultComparator);
+			
+		query.setResultTransformer(baseDTOResultTransformer);
 		return query.list();
+	}
+
+	public HibernateDTOUtils<T> sort(Comparator<T> resultComparator) {
+		this.resultComparator = resultComparator;
+		return this;
 	}
 
 }

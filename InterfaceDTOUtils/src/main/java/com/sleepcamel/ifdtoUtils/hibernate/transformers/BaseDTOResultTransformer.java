@@ -2,11 +2,14 @@ package com.sleepcamel.ifdtoUtils.hibernate.transformers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.transform.ResultTransformer;
 
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
+import com.sleepcamel.ifdtoUtils.hibernate.HibernateDTOUtils;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
 import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
 
@@ -18,9 +21,14 @@ public class BaseDTOResultTransformer<T> implements ResultTransformer {
 	private static final long serialVersionUID = 1L;
 
 	private Class<T> interfaceClass;
+	private Comparator<T> resultComparator;
 	
 	public BaseDTOResultTransformer(Class<T> interfaceClass) {
 		this.interfaceClass = interfaceClass;
+	}
+	
+	public void setComparator(Comparator<T> resultComparator) {
+		this.resultComparator = resultComparator;
 	}
 
 	@Override
@@ -46,9 +54,12 @@ public class BaseDTOResultTransformer<T> implements ResultTransformer {
 		return dto;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List transformList(List arg0) {
-		return arg0;
+	public List transformList(List list) {
+		if ( resultComparator != null ){
+			Collections.sort(list,resultComparator);
+		}
+		return list;
 	}
 }
