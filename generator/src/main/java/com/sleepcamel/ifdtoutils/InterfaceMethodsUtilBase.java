@@ -2,6 +2,8 @@ package com.sleepcamel.ifdtoutils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,6 +11,12 @@ import javassist.NotFoundException;
 
 public abstract class InterfaceMethodsUtilBase<MT, CT> {
 
+	public List<MT> getExportableMethods(CT interfaceCtClass, Comparator<MT> comparator){
+		List<MT> exportableMethods = getExportableMethods(interfaceCtClass);
+		Collections.sort(exportableMethods, comparator);
+		return exportableMethods;
+	}
+	
 	public List<MT> getExportableMethods(CT interfaceCtClass){
 		List<MT> interfaceClassMethods = getInterfaceClassMethods(interfaceCtClass);
 		try{

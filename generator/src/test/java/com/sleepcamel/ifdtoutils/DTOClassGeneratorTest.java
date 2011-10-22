@@ -2,6 +2,7 @@ package com.sleepcamel.ifdtoutils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -99,5 +100,50 @@ public class DTOClassGeneratorTest {
 		Method[] declaredMethods = generatedDTOClass.getDeclaredMethods();
 		Assert.assertEquals(1, declaredMethods.length);
 		Assert.assertEquals("normalGetter", declaredMethods[0].getName());
+
+		Assert.assertEquals(1, InterfaceJavaMethodsUtil.instance().getExportableMethods(InterfaceWithNonExportableMethods.class).size());
 	}
+	
+	@Test
+	public void testPositionAnnotationsAreGenerated(){
+		Class<PositionInterface> generatedDTOClass = DTOClassGenerator.generateDTOForInterface(PositionInterface.class, true);
+		
+		Method[] declaredMethods = generatedDTOClass.getDeclaredMethods();
+		Assert.assertEquals(declaredMethods.length, 4);
+		for(Method method:declaredMethods){
+			if ( method.getName().equals("getName") ){
+				Pos annotation = method.getAnnotation(Pos.class);
+				Assert.assertNotNull(annotation);
+				Assert.assertEquals(annotation.value(), 0);
+			}
+			
+			if ( method.getName().equals("getSomeNumber") ){
+				Pos annotation = method.getAnnotation(Pos.class);
+				Assert.assertNotNull(annotation);
+				Assert.assertEquals(annotation.value(), 1);
+			}
+			
+			if ( method.getName().equals("list") ){
+				Pos annotation = method.getAnnotation(Pos.class);
+				Assert.assertNotNull(annotation);
+				Assert.assertEquals(annotation.value(), 2);
+			}
+			
+			if ( method.getName().equals("longValue") ){
+				Pos annotation = method.getAnnotation(Pos.class);
+				Assert.assertNotNull(annotation);
+				Assert.assertEquals(annotation.value(), 3);
+			}
+		}
+	}
+}
+
+interface PositionInterface{
+	public String getName();
+	
+	public int getSomeNumber();
+	
+	public List<?> list();
+	
+	public Long longValue();
 }

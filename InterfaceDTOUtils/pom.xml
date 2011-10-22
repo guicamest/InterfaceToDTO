@@ -53,5 +53,23 @@
 		<artifactId>commons-lang3</artifactId>
 		<version>3.0.1</version>
 	</dependency>
+	<!-- For tests  -->
+	<dependency> 
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>1.2.139</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-entitymanager</artifactId>
+		<version>3.6.7.Final</version>
+		<exclusions>
+			<exclusion>
+				<groupId>javassist</groupId>
+				<artifactId>javassist</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
   </dependencies>
 </project>

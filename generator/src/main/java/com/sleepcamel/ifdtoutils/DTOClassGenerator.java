@@ -2,8 +2,6 @@ package com.sleepcamel.ifdtoutils;
 
 import java.lang.reflect.Modifier;
 
-import org.apache.commons.lang3.StringUtils;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -13,6 +11,12 @@ import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.IntegerMemberValue;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class DTOClassGenerator {
 
@@ -20,12 +24,16 @@ public class DTOClassGenerator {
 		return generateDTOForInterface(interfaceClass, null);
 	}
 	
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, boolean generateMethodPositions) {
+		return generateDTOForInterface(interfaceClass, Thread.currentThread().getContextClassLoader(), generateMethodPositions, null);
+	}
+	
 	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, String outputDirectory) {
-		return generateDTOForInterface(interfaceClass, Thread.currentThread().getContextClassLoader(), outputDirectory);
+		return generateDTOForInterface(interfaceClass, Thread.currentThread().getContextClassLoader(), false, outputDirectory);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, ClassLoader classLoader, String outputDirectory) {
+	public static <T> Class<T> generateDTOForInterface(Class<T> interfaceClass, ClassLoader classLoader, boolean generateMethodPositions, String outputDirectory) {
 		try{
 		LoaderClassPath loaderClassPath = new LoaderClassPath(classLoader);
 			
@@ -43,7 +51,7 @@ public class DTOClassGenerator {
 		cc.addInterface(interfaceCtClass);
 		
 		// Add interface methods and fields
-		addMethodsAndFields(cc, interfaceCtClass);
+		addMethodsAndFields(cc, interfaceCtClass, generateMethodPositions);
 
 		// Persist class
 		if ( StringUtils.isBlank(outputDirectory) ){
@@ -57,7 +65,8 @@ public class DTOClassGenerator {
 		}
 	}
 	
-	private static void addMethodsAndFields(CtClass cc, CtClass interfaceCtClass) throws CannotCompileException, NotFoundException {
+	private static void addMethodsAndFields(CtClass cc, CtClass interfaceCtClass, boolean generateMethodPositions) throws CannotCompileException, NotFoundException {
+		int i=0;
 		for(CtMethod method:InterfaceJavassistMethodsUtil.instance().getExportableMethods(interfaceCtClass)){
 			// Get Field
 			CtField field = getFieldFromMethod(cc,method);
@@ -69,10 +78,27 @@ public class DTOClassGenerator {
 			fieldMethod.setModifiers(fieldMethod.getModifiers() - Modifier.ABSTRACT);
 			fieldMethod.setBody("return "+field.getName()+";");
 			
+			if ( generateMethodPositions ){
+				addPositionAnnotation(cc, fieldMethod, i);
+				i++;
+			}
+			
 			cc.addMethod(fieldMethod);
 		}
 	}
 	
+	private static void addPositionAnnotation(CtClass cc, CtMethod fieldMethod, int i) throws NotFoundException {
+		CtClass ctClass = cc.getClassPool().getCtClass(Pos.class.getName());
+		ConstPool constPool = cc.getClassFile().getConstPool();
+		AnnotationsAttribute attr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+
+		Annotation annotation = new Annotation(constPool, ctClass);
+		annotation.addMemberValue("value", new IntegerMemberValue(constPool, i));
+		attr.setAnnotation(annotation);
+
+		fieldMethod.getMethodInfo().addAttribute(attr);		
+	}
+
 	private static CtField getFieldFromMethod(CtClass cc, CtMethod method) throws CannotCompileException, NotFoundException {
 		return new CtField(method.getReturnType(), getFieldNameFromMethod(method.getName()), cc);
 	}
