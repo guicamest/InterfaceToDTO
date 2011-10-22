@@ -9,7 +9,6 @@ import java.util.List;
 import org.hibernate.transform.ResultTransformer;
 
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
-import com.sleepcamel.ifdtoUtils.hibernate.HibernateDTOUtils;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
 import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
 

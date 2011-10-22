@@ -1,6 +1,8 @@
 package com.sleepcamel.ifdtoUtils.hibernate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +20,7 @@ import org.junit.Test;
 
 public class HibernateDTOUtilsTest {
 
+	private static final String USER_HAS_LAST_NAME = "User has last name";
 	private static EntityManager entityManager;
 	private static Session session;
 
@@ -27,7 +30,7 @@ public class HibernateDTOUtilsTest {
 		
 		Query query = session.createQuery(hql);
 		
-		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
 		
 		for(int i=0; i < resultList.size(); i++){
 			assertDTO(i, resultList.get(i));
@@ -39,10 +42,11 @@ public class HibernateDTOUtilsTest {
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user order by user.id";
 		Query query = session.createQuery(hql);
 		
-		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
 		Collections.sort(resultList, new SimplifiedUserComparator());
 		
 		List<ISimplifiedUser> sortedResultList = HibernateDTOUtils.getFor(ISimplifiedUser.class)
+															.list()
 															.sort(new SimplifiedUserComparator())
 															.fromQuery(query);
 		
@@ -59,20 +63,48 @@ public class HibernateDTOUtilsTest {
 	}
 	
 	@Test
-	public void testEmptyList(){
+	public void testNoResult(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.name = :noName";
 		Query query = session.createQuery(hql);
 		query.setParameter("noName", "somethingThatIsNot");
 		
-		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
 		assertTrue(resultList.isEmpty());
+		
+		ISimplifiedUser object = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		assertNull(object);
 	}
 	
+	@Test
+	public void testListBuilderInstancesAreSame(){
+		HibernateDTOListUtils<ISimplifiedUser> builder = HibernateDTOUtils.getFor(ISimplifiedUser.class).list();
+		assertEquals(builder, builder.list());
+	}
+	
+	@Test
+	public void testSingleResult(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.lastName = :lastName";
+		Query query = session.createQuery(hql);
+		query.setParameter("lastName", USER_HAS_LAST_NAME);
+		
+		ISimplifiedUser user = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		assertNotNull(user);
+		assertDTO(15, user);
+		
+		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
+		assertEquals(resultList.size(),1);
+		assertDTO(15, resultList.get(0));
+	}
 	
 	private void assertDTO(int i, ISimplifiedUser simplifiedUser){
 		assertEquals(simplifiedUser.getName(),"User name "+i%5);
 		assertEquals(simplifiedUser.getAvatar().getUrl(),"url of avatar "+i%10);
 		assertEquals(simplifiedUser.getLocation().getName(),"Location "+i%20);
+		if ( i == 15 ){
+			assertEquals(simplifiedUser.getLastName(),USER_HAS_LAST_NAME);
+		}else{
+			assertNull(simplifiedUser.getLastName());
+		}
 	}
 
 	public void dropDB() {
@@ -103,6 +135,10 @@ public class HibernateDTOUtilsTest {
 		Location location = new Location();
 		location.setName("Location "+i%20);
 		user.setLocation(location);
+		
+		if ( i == 15 ){
+			user.setLastName(USER_HAS_LAST_NAME);
+		}
 		
 		entityManager.persist(user);
 	}
