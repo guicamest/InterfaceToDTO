@@ -40,4 +40,14 @@ public class InterfaceJavaMethodsUtil extends InterfaceMethodsUtilBase<Method, C
 		return clazz.getInterfaces();
 	}
 
+	public Method getMethodWithPosition(Class<? extends Object> dtoClass, Integer methodIndex) {
+		Method[] declaredMethods = dtoClass.getDeclaredMethods();
+		for(Method method:declaredMethods){
+			Pos annotation = method.getAnnotation(Pos.class);
+			if ( annotation.value() == methodIndex )
+				return method;
+		}
+		return null;
+	}
+
 }

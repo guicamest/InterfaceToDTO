@@ -6,9 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -18,12 +22,70 @@ import org.hibernate.Session;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.sleepcamel.ifdtoUtils.exception.DTOUtilsException;
+
 public class HibernateDTOUtilsTest {
 
+	private static final int USER_ID_WITH_LAST_NAME = 15;
 	private static final String USER_HAS_LAST_NAME = "User has last name";
 	private static EntityManager entityManager;
 	private static Session session;
 
+	@Test
+	public void testSingleResult(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.lastName = :lastName";
+		Query query = session.createQuery(hql);
+		query.setParameter("lastName", USER_HAS_LAST_NAME);
+		
+		ISimplifiedUser user = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		assertNotNull(user);
+		assertDTO(USER_ID_WITH_LAST_NAME, user);
+		
+		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
+		assertEquals(resultList.size(),1);
+		assertDTO(USER_ID_WITH_LAST_NAME, resultList.get(0));
+		
+		Map<Avatar, ISimplifiedUser> resultMap = HibernateDTOUtils.getFor(ISimplifiedUser.class)
+																  .map(Avatar.class,1)
+																  .fromQuery(query);
+		assertEquals(resultMap.size(),1);
+		
+		Set<Avatar> keySet = resultMap.keySet();
+		assertEquals(keySet.size(),1);
+		
+		Collection<ISimplifiedUser> mapValues = resultMap.values();
+		assertEquals(mapValues.size(),1);
+		
+		ISimplifiedUser next = mapValues.iterator().next();
+		assertEquals(keySet.iterator().next(),next.getAvatar());
+		
+		assertDTO(USER_ID_WITH_LAST_NAME, next);
+	}
+	
+	@Test(expected=DTOUtilsException.class)
+	public void testInvalidMapIndex(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user";
+		Query query = session.createQuery(hql);
+		HibernateDTOUtils.getFor(ISimplifiedUser.class).map(Avatar.class,4)
+														.fromQuery(query);
+	}
+	
+	@Test
+	public void testNoResult(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.name = :noName";
+		Query query = session.createQuery(hql);
+		query.setParameter("noName", "somethingThatIsNot");
+		
+		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
+		assertTrue(resultList.isEmpty());
+		
+		Map<Location, ISimplifiedUser> resultMap = HibernateDTOUtils.getFor(ISimplifiedUser.class).map(Location.class,0).fromQuery(query);
+		assertTrue(resultMap.isEmpty());
+		
+		ISimplifiedUser object = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		assertNull(object);
+	}
+	
 	@Test
 	public void testSimplifiedUser(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user order by user.id";
@@ -63,44 +125,28 @@ public class HibernateDTOUtilsTest {
 	}
 	
 	@Test
-	public void testNoResult(){
-		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.name = :noName";
+	public void testSimpleMap(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user";
 		Query query = session.createQuery(hql);
-		query.setParameter("noName", "somethingThatIsNot");
-		
-		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
-		assertTrue(resultList.isEmpty());
-		
-		ISimplifiedUser object = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
-		assertNull(object);
+		Map<Avatar, ISimplifiedUser> resultMap = HibernateDTOUtils.getFor(ISimplifiedUser.class).map(Avatar.class,1)
+														.fromQuery(query);
+		assertEquals(resultMap.size(), 30);
+		for(Entry<Avatar, ISimplifiedUser> entry:resultMap.entrySet()){
+			assertEquals(entry.getKey(), entry.getValue().getAvatar());
+		}
 	}
 	
 	@Test
-	public void testListBuilderInstancesAreSame(){
-		HibernateDTOListUtils<ISimplifiedUser> builder = HibernateDTOUtils.getFor(ISimplifiedUser.class).list();
-		assertEquals(builder, builder.list());
-	}
-	
-	@Test
-	public void testSingleResult(){
-		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.lastName = :lastName";
-		Query query = session.createQuery(hql);
-		query.setParameter("lastName", USER_HAS_LAST_NAME);
-		
-		ISimplifiedUser user = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
-		assertNotNull(user);
-		assertDTO(15, user);
-		
-		List<ISimplifiedUser> resultList = HibernateDTOUtils.getFor(ISimplifiedUser.class).list().fromQuery(query);
-		assertEquals(resultList.size(),1);
-		assertDTO(15, resultList.get(0));
+	public void testBuilderInstancesAreSame(){
+		HibernateDTOListUtils<ISimplifiedUser> listBuilder = HibernateDTOUtils.getFor(ISimplifiedUser.class).list();
+		assertEquals(listBuilder, listBuilder.list());
 	}
 	
 	private void assertDTO(int i, ISimplifiedUser simplifiedUser){
 		assertEquals(simplifiedUser.getName(),"User name "+i%5);
 		assertEquals(simplifiedUser.getAvatar().getUrl(),"url of avatar "+i%10);
 		assertEquals(simplifiedUser.getLocation().getName(),"Location "+i%20);
-		if ( i == 15 ){
+		if ( i == USER_ID_WITH_LAST_NAME ){
 			assertEquals(simplifiedUser.getLastName(),USER_HAS_LAST_NAME);
 		}else{
 			assertNull(simplifiedUser.getLastName());

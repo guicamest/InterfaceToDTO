@@ -6,6 +6,10 @@ public class DTOUtilsException extends RuntimeException{
 		super(e);
 	}
 
+	public DTOUtilsException(String string) {
+		super(string);
+	}
+
 	/**
 	 * 
 	 */

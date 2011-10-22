@@ -1,5 +1,6 @@
 package com.sleepcamel.ifdtoUtils;
 
+@SuppressWarnings("unused")
 class Square implements IDrawable{
 
 	private double size;

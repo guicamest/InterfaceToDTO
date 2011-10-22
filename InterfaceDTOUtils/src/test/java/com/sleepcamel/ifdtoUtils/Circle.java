@@ -1,5 +1,6 @@
 package com.sleepcamel.ifdtoUtils;
 
+@SuppressWarnings("unused")
 class Circle implements IDrawable{
 
 	private double radius;

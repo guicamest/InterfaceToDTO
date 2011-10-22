@@ -1,8 +1,14 @@
 package com.sleepcamel.ifdtoUtils.hibernate;
 
-import org.hibernate.Query;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import com.sleepcamel.ifdtoUtils.hibernate.transformers.BaseDTOResultTransformer;
+import org.hibernate.Query;
+import org.hibernate.transform.ResultTransformer;
+
+import com.sleepcamel.ifdtoUtils.hibernate.transformers.ListDTOResultTransformer;
 
 public class HibernateDTOUtils<T,RT> {
 
@@ -16,15 +22,31 @@ public class HibernateDTOUtils<T,RT> {
 		this.interfaceClass = interfaceClass;
 	}
 
-	@SuppressWarnings("unchecked")
 	public RT fromQuery(Query query) {
-		BaseDTOResultTransformer<T> baseDTOResultTransformer = new BaseDTOResultTransformer<T>(interfaceClass);
-		query.setResultTransformer(baseDTOResultTransformer);
+		query.setResultTransformer(getDTOResultTransformer());
+		return getResult(query);
+	}
+
+	protected ResultTransformer getDTOResultTransformer() {
+		return new ListDTOResultTransformer<T>(interfaceClass);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected RT getResult(Query query) {
 		return (RT) query.uniqueResult();
 	}
 
 	public HibernateDTOListUtils<T> list() {
 		return new HibernateDTOListUtils<T>(interfaceClass);
 	}
+	
+	public <E> HibernateDTOMapUtils<T,E,T> map(Class<E> keyClass, int position) {
+		return new HibernateDTOMapUtils<T,E,T>(interfaceClass, getListFor(keyClass, position));
+	}
 
+	public List<Map.Entry<Integer,Class<?>>> getListFor(Class<?> keyClass, int position) {
+		List<Map.Entry<Integer,Class<?>>> list = new ArrayList<Map.Entry<Integer,Class<?>>>();
+		list.add(new AbstractMap.SimpleEntry<Integer,Class<?>>(position, keyClass));
+		return list;
+	}
 }
