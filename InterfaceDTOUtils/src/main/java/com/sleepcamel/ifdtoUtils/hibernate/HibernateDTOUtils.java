@@ -43,6 +43,10 @@ public class HibernateDTOUtils<T,RT> {
 	public <E> HibernateDTOMapUtils<T,E,T> map(Class<E> keyClass, int position) {
 		return new HibernateDTOMapUtils<T,E,T>(interfaceClass, getListFor(keyClass, position));
 	}
+	
+	public <E> HibernateDTOMapUtils<T,E,List<T>> mapList(Class<E> keyClass, int position) {
+		return new HibernateDTOMapUtils<T,E,List<T>>(interfaceClass, getListFor(keyClass, position), true);
+	}
 
 	private List<Map.Entry<Integer,Class<?>>> getListFor(Class<?> keyClass, int position) {
 		List<Map.Entry<Integer,Class<?>>> list = new ArrayList<Map.Entry<Integer,Class<?>>>();

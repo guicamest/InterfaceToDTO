@@ -6,7 +6,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 import com.sleepcamel.ifdtoutils.InterfaceDTOInfo;
@@ -21,56 +25,56 @@ public class InterfaceDTOBuilderGenerationTest {
 		IDrawable drawableCircle = InterfaceDTOBuilder.builder(IDrawable.class).dto(circle);
 		IDrawable drawableSquare = InterfaceDTOBuilder.builder(IDrawable.class).dto(square);
 		
-		Assert.assertFalse(circle == drawableCircle);
-		Assert.assertFalse(square == drawableSquare);
+		assertFalse(circle == drawableCircle);
+		assertFalse(square == drawableSquare);
 		
 		Method[] methods = drawableCircle.getClass().getDeclaredMethods();
-		Assert.assertEquals(methods.length, 2);
+		assertEquals(methods.length, 2);
 		for(Method method:methods){
-			Assert.assertTrue(method.getName().equals("getArea") || method.getName().equals("isHasSides") );
+			assertTrue(method.getName().equals("getArea") || method.getName().equals("isHasSides") );
 		}
 		
 		methods = drawableSquare.getClass().getDeclaredMethods();
-		Assert.assertEquals(methods.length, 2);
+		assertEquals(methods.length, 2);
 		for(Method method:methods){
-			Assert.assertTrue(method.getName().equals("getArea") || method.getName().equals("isHasSides") );
+			assertTrue(method.getName().equals("getArea") || method.getName().equals("isHasSides") );
 		}
 		
-		Assert.assertEquals(drawableCircle.getArea(), circle.getArea(),0);
-		Assert.assertEquals(drawableSquare.getArea(), square.getArea(),0);
+		assertEquals(drawableCircle.getArea(), circle.getArea(),0);
+		assertEquals(drawableSquare.getArea(), square.getArea(),0);
 		
-		Assert.assertEquals(drawableCircle.isHasSides(), circle.isHasSides());
-		Assert.assertEquals(drawableSquare.isHasSides(), square.isHasSides());
+		assertEquals(drawableCircle.isHasSides(), circle.isHasSides());
+		assertEquals(drawableSquare.isHasSides(), square.isHasSides());
 	}
 	
 	@Test
 	public void testEntityTypeIsGeneratedOK(){
 		Bass bass = new Bass();
 		MusicInstrument bassDto = InterfaceDTOBuilder.builder(MusicInstrument.class).dto(bass);
-		Assert.assertEquals(bassDto.getEntityType(),"BASS");
+		assertEquals(bassDto.getEntityType(),"BASS");
 		
 		Guitar guitar = new Guitar();
 		MusicInstrument guitarDto = InterfaceDTOBuilder.builder(MusicInstrument.class).dto(guitar);
-		Assert.assertEquals("Guitar", guitarDto.getEntityType());
+		assertEquals("Guitar", guitarDto.getEntityType());
 		
 		Keyboard keyboard = new Keyboard();
 		MusicInstrument keyboardDto = InterfaceDTOBuilder.builder(MusicInstrument.class).dto(keyboard);
-		Assert.assertEquals("Keyboard", keyboardDto.getEntityType());
+		assertEquals("Keyboard", keyboardDto.getEntityType());
 		
 		guitarDto = InterfaceDTOBuilder.builder(MusicInstrument.class)
 										.useFullPackage()
 										.dto(guitar);
-		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Guitar", guitarDto.getEntityType());
+		assertEquals("com.sleepcamel.ifdtoUtils.Guitar", guitarDto.getEntityType());
 		
 		keyboardDto = InterfaceDTOBuilder.builder(MusicInstrument.class)
 										.useFullPackage()
 										.dto(keyboard);
-		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keyboardDto.getEntityType());
+		assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keyboardDto.getEntityType());
 		
 		MusicInstrumentWithKeys keysDto = InterfaceDTOBuilder.builder(MusicInstrumentWithKeys.class)
 										.useFullPackage()
 										.dto(keyboard);
-		Assert.assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keysDto.getEntityType());
+		assertEquals("com.sleepcamel.ifdtoUtils.Keyboard", keysDto.getEntityType());
 	}
 	
 	@Test
@@ -86,12 +90,12 @@ public class InterfaceDTOBuilderGenerationTest {
 		
 		String dtoClassName = InterfaceDTOInfo.getInfo(INode.class).getDTOCanonicalName();
 
-		Assert.assertEquals(node.getClass().getName(), dtoClassName);
+		assertEquals(node.getClass().getName(), dtoClassName);
 
-		Assert.assertEquals(node.getChild().getClass().getName(), Node.class.getName());
+		assertEquals(node.getChild().getClass().getName(), Node.class.getName());
 
 		String fatherClassName = node.getFather().getClass().getName();
-		Assert.assertTrue(fatherClassName.equals(dtoClassName));
+		assertTrue(fatherClassName.equals(dtoClassName));
 	}
 	
 	@Test
@@ -112,8 +116,8 @@ public class InterfaceDTOBuilderGenerationTest {
 		while(iterator.hasNext()){
 			IDrawable next = iterator.next();
 			IDrawable next2 = iterator2.next();
-			Assert.assertEquals(next.getArea(), next2.getArea(), 0);
-			Assert.assertEquals(next.isHasSides(), next2.isHasSides());	
+			assertEquals(next.getArea(), next2.getArea(), 0);
+			assertEquals(next.isHasSides(), next2.isHasSides());	
 		}
 	}
 	
@@ -124,18 +128,18 @@ public class InterfaceDTOBuilderGenerationTest {
 		
 		IDrawable generatedAvatar = friendable.getAvatar();
 		IDrawable userAvatar = user.getAvatar();
-		Assert.assertEquals(generatedAvatar.getClass(), userAvatar.getClass());
+		assertEquals(generatedAvatar.getClass(), userAvatar.getClass());
 		
 		friendable = InterfaceDTOBuilder.builder(IFriendable.class)
 										.add(IDrawable.class)
 										.dto(user);
 		
 		generatedAvatar = friendable.getAvatar();
-		Assert.assertNotSame(generatedAvatar.getClass(), userAvatar.getClass());
-		Assert.assertSame(generatedAvatar.getClass(), InterfaceDTOUtils.getDto(IDrawable.class).getClass());
+		assertNotSame(generatedAvatar.getClass(), userAvatar.getClass());
+		assertSame(generatedAvatar.getClass(), InterfaceDTOUtils.getDto(IDrawable.class).getClass());
 		
-		Assert.assertEquals(generatedAvatar.getArea(), userAvatar.getArea(), 0);
-		Assert.assertEquals(generatedAvatar.isHasSides(), userAvatar.isHasSides());
+		assertEquals(generatedAvatar.getArea(), userAvatar.getArea(), 0);
+		assertEquals(generatedAvatar.isHasSides(), userAvatar.isHasSides());
 	}
 	
 	@Test
@@ -152,14 +156,14 @@ public class InterfaceDTOBuilderGenerationTest {
 										.dto(user);
 		
 		IDrawable generatedAvatar = friendable.getAvatar();
-		Assert.assertSame(generatedAvatar.getClass(), InterfaceDTOUtils.getDto(IDrawable.class).getClass());
-		Assert.assertSame(friendable.getNode().getClass(), Node.class);		
+		assertSame(generatedAvatar.getClass(), InterfaceDTOUtils.getDto(IDrawable.class).getClass());
+		assertSame(friendable.getNode().getClass(), Node.class);		
 		
-		Assert.assertSame(friendable.getFather().getClass(), InterfaceDTOUtils.getDto(IUser.class).getClass());
-		Assert.assertSame(friendable.getMother().getClass(), InterfaceDTOUtils.getDto(IUser.class).getClass());
+		assertSame(friendable.getFather().getClass(), InterfaceDTOUtils.getDto(IUser.class).getClass());
+		assertSame(friendable.getMother().getClass(), InterfaceDTOUtils.getDto(IUser.class).getClass());
 		
-		Assert.assertEquals(generatedAvatar.getArea(), userAvatar.getArea(), 0);
-		Assert.assertEquals(generatedAvatar.isHasSides(), userAvatar.isHasSides());
+		assertEquals(generatedAvatar.getArea(), userAvatar.getArea(), 0);
+		assertEquals(generatedAvatar.isHasSides(), userAvatar.isHasSides());
 
 		// Now add INode twice, one of them is discarded
 		// Add String and IGenerable also, they shouldn't have effect 
@@ -172,6 +176,6 @@ public class InterfaceDTOBuilderGenerationTest {
 												.add(IGenerable.class)
 												.dto(user);
 
-		Assert.assertSame(friendable.getNode().getClass(), InterfaceDTOUtils.getDto(INode.class).getClass());
+		assertSame(friendable.getNode().getClass(), InterfaceDTOUtils.getDto(INode.class).getClass());
 	}
 }

@@ -1,12 +1,13 @@
 package com.sleepcamel.ifdtoUtils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.gson.reflect.TypeToken;
@@ -21,16 +22,16 @@ public class InterfaceDTOJsonAndBuilderIntegrationTest {
 		String justUtils = InterfaceDTOJsonUtils.toJson(IDrawable.class, drawable);
 		String dto = InterfaceDTOBuilder.builder(IDrawable.class).toJson(drawable);
 
-		Assert.assertEquals(justUtils, dto);
+		assertEquals(justUtils, dto);
 		
 		IDrawable utilsDrawable = InterfaceDTOJsonUtils.fromJson(IDrawable.class, justUtils);
 		IDrawable gsonDrawable = InterfaceDTOBuilder.builder(IDrawable.class)
 								 .fromJson(justUtils);
 		
-		Assert.assertEquals(utilsDrawable.getArea(), gsonDrawable.getArea(), 0);
-		Assert.assertEquals(utilsDrawable.getArea(), drawable.getArea(), 0);
-		Assert.assertEquals(utilsDrawable.isHasSides(), gsonDrawable.isHasSides());
-		Assert.assertEquals(utilsDrawable.isHasSides(), drawable.isHasSides());
+		assertEquals(utilsDrawable.getArea(), gsonDrawable.getArea(), 0);
+		assertEquals(utilsDrawable.getArea(), drawable.getArea(), 0);
+		assertEquals(utilsDrawable.isHasSides(), gsonDrawable.isHasSides());
+		assertEquals(utilsDrawable.isHasSides(), drawable.isHasSides());
 	}
 	
 	@Test
@@ -50,7 +51,7 @@ public class InterfaceDTOJsonAndBuilderIntegrationTest {
 							.withToken(new TypeToken<List<IDrawable>>() {})
 							.toJson(drawables);
 		
-		Assert.assertEquals(gsonSerialization, builderGson);
+		assertEquals(gsonSerialization, builderGson);
 		
 		List<IDrawable> deserializedDrawables = InterfaceDTOBuilder.builder(IDrawable.class)
 									.withToken(new TypeToken<List<IDrawable>>() {})
@@ -61,8 +62,8 @@ public class InterfaceDTOJsonAndBuilderIntegrationTest {
 		while(iterator.hasNext()){
 			IDrawable next = iterator.next();
 			IDrawable next2 = iterator2.next();
-			Assert.assertEquals(next.getArea(), next2.getArea(), 0);
-			Assert.assertEquals(next.isHasSides(), next2.isHasSides());	
+			assertEquals(next.getArea(), next2.getArea(), 0);
+			assertEquals(next.isHasSides(), next2.isHasSides());	
 		}
 	}
 

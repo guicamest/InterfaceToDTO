@@ -1,6 +1,6 @@
 package com.sleepcamel.ifdtoutils;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class InterfaceDTOInfoTest {
@@ -8,40 +8,40 @@ public class InterfaceDTOInfoTest {
 	@Test
 	public void testInterfaceDoesntHaveToDTO(){
 		InterfaceDTOInfo<String> info = InterfaceDTOInfo.getInfo(String.class);
-		Assert.assertEquals(info.getDTOCanonicalName(), "java.lang.StringDTO");
+		assertEquals(info.getDTOCanonicalName(), "java.lang.StringDTO");
 	}
 
 	@Test
 	public void testInterfaceWithPackageSuffix(){
 		InterfaceDTOInfo<InterfaceWithPackageSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithPackageSuffix.class);
-		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.dtoPackage.InterfaceWithPackageSuffixDTO");
+		assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.dtoPackage.InterfaceWithPackageSuffixDTO");
 	}
 
 	@Test
 	public void testInterfaceWithDTOSuffix(){
 		InterfaceDTOInfo<InterfaceWithDtoSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithDtoSuffix.class);
-		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.InterfaceWithDtoSuffix"+InterfaceWithDtoSuffix.class.getAnnotation(ToDTO.class).dtoSuffix());
+		assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils.InterfaceWithDtoSuffix"+InterfaceWithDtoSuffix.class.getAnnotation(ToDTO.class).dtoSuffix());
 	}
 	
 
 	@Test
 	public void testInterfaceWithDTOName(){
 		InterfaceDTOInfo<InterfaceWithDtoName> info = InterfaceDTOInfo.getInfo(InterfaceWithDtoName.class);
-		Assert.assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils."+InterfaceWithDtoName.class.getAnnotation(ToDTO.class).dtoName());
+		assertEquals(info.getDTOCanonicalName(), "com.sleepcamel.ifdtoutils."+InterfaceWithDtoName.class.getAnnotation(ToDTO.class).dtoName());
 	}
 	
 	@Test
 	public void testInterfaceWithFullPackage(){
 		InterfaceDTOInfo<InterfaceWithFullPackage> info = InterfaceDTOInfo.getInfo(InterfaceWithFullPackage.class);
-		Assert.assertEquals(info.getDTOCanonicalName(), InterfaceWithFullPackage.class.getAnnotation(ToDTO.class).fullPackage()+".InterfaceWithFullPackageDTO");
+		assertEquals(info.getDTOCanonicalName(), InterfaceWithFullPackage.class.getAnnotation(ToDTO.class).fullPackage()+".InterfaceWithFullPackageDTO");
 	}
 	
 	@Test
 	public void testNormalizeSubpackage(){
 		InterfaceDTOInfo<InterfaceWithPackageSuffix> info = InterfaceDTOInfo.getInfo(InterfaceWithPackageSuffix.class);
-		Assert.assertEquals(info.normalizePackage(".lala"),"lala");
-		Assert.assertEquals(info.normalizePackage("aswd"),"aswd");
-		Assert.assertEquals(info.normalizePackage("jkfr."),"jkfr");
-		Assert.assertEquals(info.normalizePackage(".pofe."),"pofe");
+		assertEquals(info.normalizePackage(".lala"),"lala");
+		assertEquals(info.normalizePackage("aswd"),"aswd");
+		assertEquals(info.normalizePackage("jkfr."),"jkfr");
+		assertEquals(info.normalizePackage(".pofe."),"pofe");
 	}
 }

@@ -19,9 +19,12 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 	
 	private List<Entry<Integer, Class<?>>> keys;
 
-	public MapDTOResultTransformer(Class<T> interfaceClass, List<Entry<Integer, Class<?>>> keys) {
+	private boolean dtoIsList;
+
+	public MapDTOResultTransformer(Class<T> interfaceClass, List<Entry<Integer, Class<?>>> keys, boolean dtoIsList) {
 		super(interfaceClass);
 		this.keys = keys;
+		this.dtoIsList = dtoIsList;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -54,7 +57,15 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 				}
 				lastMap = (Map<Object, Object>) object;
 			}else{
-				lastMap.put(keyToUse, result);
+				if ( dtoIsList ){
+					if ( object == null ){
+						object = new ArrayList<Object>();
+					}
+					((List<Object>)object).add(result);
+				}else{
+					object = result;
+				}
+				lastMap.put(keyToUse, object);
 			}
 			
 		}

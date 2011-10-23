@@ -146,6 +146,27 @@ public class HibernateDTOUtilsTest {
 		}
 	}
 	
+	@Test
+	public void testMapList(){
+		String hql = "select user.name, user.avatar, user.location from User user";
+		Query query = session.createQuery(hql);
+		Map<Location, List<ISimplifiedUser>> resultMap = HibernateDTOUtils.getFor(ISimplifiedUser.class)
+														.mapList(Location.class,2)
+														.fromQuery(query);
+		assertEquals(resultMap.size(), 20);
+		for(Entry<Location, List<ISimplifiedUser>> entry:resultMap.entrySet()){
+			Location key = entry.getKey();
+			if ( (key.id-1) % 20 < 10 ){
+				assertEquals(entry.getValue().size(), 2);
+				assertEquals(entry.getValue().get(0).getLocation(), key);
+				assertEquals(entry.getValue().get(1).getLocation(), key);
+			}else{
+				assertEquals(entry.getValue().size(), 1);
+				assertEquals(entry.getValue().get(0).getLocation(), key);
+			}
+		}
+	}
+	
 	@Test(expected=DTOUtilsException.class)
 	public void testInvalidMapIndex(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user";

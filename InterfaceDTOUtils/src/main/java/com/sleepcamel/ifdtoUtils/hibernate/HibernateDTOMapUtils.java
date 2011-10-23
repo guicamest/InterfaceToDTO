@@ -13,15 +13,21 @@ import com.sleepcamel.ifdtoUtils.hibernate.transformers.MapDTOResultTransformer;
 public class HibernateDTOMapUtils<T,K,V> extends HibernateDTOUtils<T, Map<K,V>> {
 
 	private List<Entry<Integer, Class<?>>> keys;
+	private boolean dtoIsList;
 
 	protected HibernateDTOMapUtils(Class<T> interfaceClass, List<Entry<Integer, Class<?>>> list) {
+		this(interfaceClass, list, false);
+	}
+	
+	protected HibernateDTOMapUtils(Class<T> interfaceClass, List<Entry<Integer, Class<?>>> list, boolean dtoIsList) {
 		super(interfaceClass);
 		this.keys = list;
+		this.dtoIsList = dtoIsList;
 	}
 
 	@Override
 	protected ResultTransformer getDTOResultTransformer() {
-		return new MapDTOResultTransformer<T>(interfaceClass, keys);
+		return new MapDTOResultTransformer<T>(interfaceClass, keys, dtoIsList);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -29,7 +35,7 @@ public class HibernateDTOMapUtils<T,K,V> extends HibernateDTOUtils<T, Map<K,V>> 
 		return (Map<K,V>) query.list().get(0);
 	}
 	
-	/* 
+	/** 
 	 * Don't USE!
 	 */
 	@Override
