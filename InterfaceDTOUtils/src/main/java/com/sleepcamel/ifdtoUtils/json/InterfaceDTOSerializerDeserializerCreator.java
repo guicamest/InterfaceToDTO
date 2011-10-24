@@ -14,7 +14,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
-import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
+import com.sleepcamel.ifdtoutils.methodUtil.InterfaceJavaMethodsUtil;
 
 public class InterfaceDTOSerializerDeserializerCreator<T> implements JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>{
 

@@ -1,14 +1,18 @@
 package com.sleepcamel.ifdtoutils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javassist.NotFoundException;
+
 import org.junit.Test;
+
+import com.sleepcamel.ifdtoutils.methodUtil.InterfaceJavaMethodsUtil;
 
 
 public class DTOClassGeneratorTest {
@@ -113,31 +117,53 @@ public class DTOClassGeneratorTest {
 		
 		Method[] declaredMethods = generatedDTOClass.getDeclaredMethods();
 		assertEquals(declaredMethods.length, 4);
+		
+		Method method = InterfaceJavaMethodsUtil.instance().getMethodWithPosition(generatedDTOClass, 0);
+		assertEquals(method.getName(), "getName");
+		
+		method = InterfaceJavaMethodsUtil.instance().getMethodWithPosition(generatedDTOClass, 1);
+		assertEquals(method.getName(), "getSomeNumber");
+		
+		method = InterfaceJavaMethodsUtil.instance().getMethodWithPosition(generatedDTOClass, 2);
+		assertEquals(method.getName(), "list");
+		
+		method = InterfaceJavaMethodsUtil.instance().getMethodWithPosition(generatedDTOClass, 3);
+		assertEquals(method.getName(), "longValue");
+	}
+	
+	@Test
+	public void testGeneratedSetters() throws NotFoundException, InstantiationException, IllegalAccessException{
+		Class<InterfaceWithSetters> generatedDTOClass = DTOClassGenerator.generateDTOForInterface(InterfaceWithSetters.class, true, true);
+		InterfaceJavaMethodsUtil methodsUtil = InterfaceJavaMethodsUtil.instance();
+		
+		Method[] declaredMethods = generatedDTOClass.getDeclaredMethods();
+		assertEquals(declaredMethods.length, 5);
+		
+		boolean setNameIsFound = false;
+		boolean setSomeNumberIsFound = false;
+		
 		for(Method method:declaredMethods){
-			if ( method.getName().equals("getName") ){
-				Pos annotation = method.getAnnotation(Pos.class);
-				assertNotNull(annotation);
-				assertEquals(annotation.value(), 0);
+			if ( method.getName().equals("setName") && methodsUtil.isSetter(method, String.class) ){
+				setNameIsFound = true;
 			}
 			
-			if ( method.getName().equals("getSomeNumber") ){
-				Pos annotation = method.getAnnotation(Pos.class);
-				assertNotNull(annotation);
-				assertEquals(annotation.value(), 1);
-			}
-			
-			if ( method.getName().equals("list") ){
-				Pos annotation = method.getAnnotation(Pos.class);
-				assertNotNull(annotation);
-				assertEquals(annotation.value(), 2);
-			}
-			
-			if ( method.getName().equals("longValue") ){
-				Pos annotation = method.getAnnotation(Pos.class);
-				assertNotNull(annotation);
-				assertEquals(annotation.value(), 3);
+			if ( method.getName().equals("setSomeNumber") && methodsUtil.isSetter(method, int.class) ){
+				setSomeNumberIsFound = true;
 			}
 		}
+		
+		assertTrue(setNameIsFound);
+		assertTrue(setSomeNumberIsFound);
+		
+		InterfaceWithSetters newInstance = generatedDTOClass.newInstance();
+		
+		assertNull(newInstance.getName());
+		newInstance.setName("New Name");
+		assertEquals(newInstance.getName(), "New Name");
+		
+		assertEquals(newInstance.getSomeNumber(),0);
+		newInstance.setSomeNumber(5);
+		assertEquals(newInstance.getSomeNumber(), 5);
 	}
 }
 

@@ -1,6 +1,8 @@
-package com.sleepcamel.ifdtoutils;
+package com.sleepcamel.ifdtoutils.methodUtil;
 
 import java.lang.reflect.Method;
+
+import com.sleepcamel.ifdtoutils.Pos;
 
 public class InterfaceJavaMethodsUtil extends InterfaceMethodsUtilBase<Method, Class<?>> {
 
@@ -17,34 +19,40 @@ public class InterfaceJavaMethodsUtil extends InterfaceMethodsUtilBase<Method, C
 	}
 	
 	@Override
-	boolean isExportableMethod(Method method) {
-		// Skip methods with parameters
-		if ( method.getParameterTypes().length != 0 ){
-			return false;
-		}
-		
-		// Skip methods with void return type
-		if ( method.getReturnType().equals(void.class) ){
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	Method[] getInterfaceMethods(Class<?> clazz) {
 		return clazz.getDeclaredMethods();
 	}
 
 	@Override
-	Class<?>[] getInterfaceSuperInterfaces(Class<?> clazz) {
+	Class<?>[] getSuperInterfaces(Class<?> clazz) {
 		return clazz.getInterfaces();
+	}
+
+	@Override
+	Class<?> getReturnType(Method method) {
+		return method.getReturnType();
+	}
+
+	@Override
+	String getName(Method method) {
+		return method.getName();
+	}
+
+	@Override
+	Class<?> getVoidClass() {
+		return void.class;
+	}
+
+	@Override
+	Class<?>[] getParameterTypes(Method method) {
+		return method.getParameterTypes();
 	}
 
 	public Method getMethodWithPosition(Class<? extends Object> dtoClass, Integer methodIndex) {
 		Method[] declaredMethods = dtoClass.getDeclaredMethods();
 		for(Method method:declaredMethods){
 			Pos annotation = method.getAnnotation(Pos.class);
-			if ( annotation.value() == methodIndex )
+			if ( annotation != null && annotation.value() == methodIndex )
 				return method;
 		}
 		return null;

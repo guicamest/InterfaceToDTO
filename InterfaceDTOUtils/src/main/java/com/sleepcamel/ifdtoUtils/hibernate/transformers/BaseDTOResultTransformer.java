@@ -8,7 +8,7 @@ import org.hibernate.transform.ResultTransformer;
 
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
-import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
+import com.sleepcamel.ifdtoutils.methodUtil.InterfaceJavaMethodsUtil;
 
 abstract public class BaseDTOResultTransformer<T> implements ResultTransformer {
 
@@ -18,25 +18,27 @@ abstract public class BaseDTOResultTransformer<T> implements ResultTransformer {
 	private static final long serialVersionUID = 1L;
 
 	private Class<T> interfaceClass;
+	private Class<? extends Object> dtoClass;
+	protected List<Method> dtoMethods;
 	
 	public BaseDTOResultTransformer(Class<T> interfaceClass) {
 		this.interfaceClass = interfaceClass;
+		T dto = InterfaceDTOUtils.getDto(interfaceClass, true, true);
+		dtoClass = dto.getClass();
+//		dtoMethods = InterfaceJavaMethodsUtil.instance().getSortedExportableMethods(dtoClass);
+		dtoMethods = InterfaceJavaMethodsUtil.instance().getExportableMethods(dtoClass, MethodPosComparator.instance());
 	}
 	
 	@Override
 	public Object transformTuple(Object[] selectObjects, String[] selectAliases) {
-		T dto = InterfaceDTOUtils.getDto(interfaceClass, true);
-		Class<? extends Object> dtoClass = dto.getClass();
+		T dto = InterfaceDTOUtils.getDto(interfaceClass, true, true);
 		int qty = selectObjects.length;
 
 		// Fill fields
-		int i = 0;
-		List<Method> exportableMethods = InterfaceJavaMethodsUtil.instance().getExportableMethods(dtoClass, MethodPosComparator.instance());
-		exportableMethods = exportableMethods.subList(0, qty);
-		for(Method method:exportableMethods ){
+		for(int i = 0; i < qty; i++){
 			try {
-				Field field = dtoClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(method.getName()));
-				field.set(dto, selectObjects[i++]);
+				Field field = dtoClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(dtoMethods.get(i).getName()));
+				field.set(dto, selectObjects[i]);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

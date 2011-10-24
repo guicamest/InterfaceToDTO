@@ -1,9 +1,9 @@
 package com.sleepcamel.ifdtoUtils.hibernate;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -61,7 +61,19 @@ public class HibernateDTOUtilsTest {
 		
 		assertDTO(USER_ID_WITH_LAST_NAME, next);
 	}
-	
+
+	@Test
+	public void testSetter(){
+		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.lastName = :lastName";
+		Query query = session.createQuery(hql);
+		query.setParameter("lastName", USER_HAS_LAST_NAME);
+		
+		ISimplifiedUser user = HibernateDTOUtils.getFor(ISimplifiedUser.class).fromQuery(query);
+		assertEquals(user.getLastName(), USER_HAS_LAST_NAME);
+		user.setLastName("New user Last Name");
+		assertEquals(user.getLastName(), "New user Last Name");
+	}
+
 	@Test
 	public void testNoResult(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user where user.name = :noName";
@@ -242,6 +254,8 @@ interface ISimplifiedUser{
 	
 	String getName();
 	
+	void setLastName(String string);
+
 	Avatar getAvatar();
 	
 	Location getLocation();

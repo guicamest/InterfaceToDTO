@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.sleepcamel.ifdtoUtils.exception.DTOUtilsException;
-import com.sleepcamel.ifdtoutils.InterfaceJavaMethodsUtil;
 
 public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 
@@ -18,13 +17,17 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 	private static final long serialVersionUID = -256660858458018183L;
 	
 	private List<Entry<Integer, Class<?>>> keys;
-
-	private boolean dtoIsList;
+	private ILastValueStrategy lastValueStrategy;
 
 	public MapDTOResultTransformer(Class<T> interfaceClass, List<Entry<Integer, Class<?>>> keys, boolean dtoIsList) {
 		super(interfaceClass);
 		this.keys = keys;
-		this.dtoIsList = dtoIsList;
+
+		if ( dtoIsList ){
+			lastValueStrategy = ResultListValueStrategy.instance();
+		}else{
+			lastValueStrategy = ResultValueStrategy.instance();
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -45,41 +48,29 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 	private void fillMapWithResult(Map<Object, Object> map, T result) {
 		int size = keys.size();
 		Map<Object, Object> lastMap = map;
+
 		for(int i=0; i < size; i++){
 			Entry<Integer, Class<?>> pair = keys.get(i);
-			Object keyToUse = getObjectValue(pair.getKey(),result);
+			Object keyToUse = getObjectValue(result, pair.getKey());
 			
-			Object object = lastMap.get(keyToUse);
+			Object lastMapValue = lastMap.get(keyToUse);
 			if ( i < keys.size() - 1 ){
-				if ( object == null ){
-					object = new HashMap<Object, Object>();
-					lastMap.put(keyToUse, object);
+				if ( lastMapValue == null ){
+					lastMapValue = new HashMap<Object, Object>();
+					lastMap.put(keyToUse, lastMapValue);
 				}
-				lastMap = (Map<Object, Object>) object;
+				lastMap = (Map<Object, Object>) lastMapValue;
 			}else{
-				if ( dtoIsList ){
-					if ( object == null ){
-						object = new ArrayList<Object>();
-					}
-					((List<Object>)object).add(result);
-				}else{
-					object = result;
-				}
-				lastMap.put(keyToUse, object);
+				lastMap.put(keyToUse, lastValueStrategy.get(lastMapValue, result));
 			}
 			
 		}
 	}
 
-	private Object getObjectValue(Integer methodIndex, T result) {
-		Class<? extends Object> dtoClass = result.getClass();
-		Method methodWithPosition = InterfaceJavaMethodsUtil.instance().getMethodWithPosition(dtoClass, methodIndex);
-		if ( methodWithPosition == null ){
-			throw new DTOUtilsException("Invalid index "+methodIndex);
-		}
-			
+	private Object getObjectValue(T result, Integer methodIndex) {
 		try{
-			return methodWithPosition.invoke(result);
+			Method method = dtoMethods.get(methodIndex);
+			return method.invoke(result);
 		}catch(Exception e){
 			throw new DTOUtilsException(e);
 		}

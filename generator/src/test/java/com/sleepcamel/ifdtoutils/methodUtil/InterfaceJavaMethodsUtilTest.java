@@ -1,4 +1,4 @@
-package com.sleepcamel.ifdtoutils;
+package com.sleepcamel.ifdtoutils.methodUtil;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -7,6 +7,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
+
+import com.sleepcamel.ifdtoutils.DTOClassGenerator;
+import com.sleepcamel.ifdtoutils.methodUtil.InterfaceJavaMethodsUtil;
 
 public class InterfaceJavaMethodsUtilTest {
 
