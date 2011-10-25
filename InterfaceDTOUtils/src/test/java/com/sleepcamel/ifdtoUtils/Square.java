@@ -1,7 +1,7 @@
 package com.sleepcamel.ifdtoUtils;
 
 @SuppressWarnings("unused")
-class Square implements IDrawable{
+public class Square implements IDrawable{
 
 	private double size;
 	private String squareProperty1 = "";

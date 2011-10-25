@@ -1,6 +1,6 @@
 package com.sleepcamel.ifdtoUtils;
 
-class Triangle implements IDrawable{
+public class Triangle implements IDrawable{
 
 	private double a;
 	private double b;

@@ -25,7 +25,6 @@ abstract public class BaseDTOResultTransformer<T> implements ResultTransformer {
 		this.interfaceClass = interfaceClass;
 		T dto = InterfaceDTOUtils.getDto(interfaceClass, true, true);
 		dtoClass = dto.getClass();
-//		dtoMethods = InterfaceJavaMethodsUtil.instance().getSortedExportableMethods(dtoClass);
 		dtoMethods = InterfaceJavaMethodsUtil.instance().getExportableMethods(dtoClass, MethodPosComparator.instance());
 	}
 	

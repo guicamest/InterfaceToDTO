@@ -3,12 +3,6 @@ package com.sleepcamel.ifdtoUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.sleepcamel.ifdtoUtils.json.InterfaceDTOJsonBuilder;
-import com.sleepcamel.ifdtoUtils.json.InterfaceDTOJsonUtils;
-
 public class InterfaceDTOBuilder<E> {
 
 	private Class<E> interfaceClass;
@@ -63,26 +57,6 @@ public class InterfaceDTOBuilder<E> {
 			return null;
 		}
 		return InterfaceDTOUtils.getFilledDtos(interfaceClass, objects, recursive, otherInterfaces, useFullPackage);
-	}
-	
-	public GsonBuilder gsonBuilder() {
-		return InterfaceDTOJsonUtils.getGsonBuilder(interfaceClass);
-	}
-	
-	public Gson gson() {
-		return gsonBuilder().create();
-	}
-	
-	public String toJson(E object){
-		return gson().toJson(object, interfaceClass);
-	}
-	
-	public E fromJson(String json) {
-		return gson().fromJson(json, interfaceClass);
-	}
-
-	public <T> InterfaceDTOJsonBuilder<T> withToken(TypeToken<T> tt){
-		return InterfaceDTOJsonBuilder.withToken(gson(),tt);
 	}
 
 }

@@ -127,5 +127,13 @@
 		<maven-eclipse-plugin.version>2.7</maven-eclipse-plugin.version>
 		<maven-resources-plugin.version>2.4.1</maven-resources-plugin.version>
 		<maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>
+		<junit.junit.version>4.8.2</junit.junit.version>
+		<org.codehaus.jackson.jackson-mapper-asl.version>1.9.0</org.codehaus.jackson.jackson-mapper-asl.version>
+		<org.apache.commons.commons-lang3.version>3.0.1</org.apache.commons.commons-lang3.version>
+		<org.javassist.javassist.version>3.15.0-GA</org.javassist.javassist.version>
+		<org.hibernate.hibernate-entitymanager.version>3.6.7.Final</org.hibernate.hibernate-entitymanager.version>
+		<com.h2database.h2.version>1.2.139</com.h2database.h2.version>
+		<commons-io.commons-io.version>2.0.1</commons-io.commons-io.version>
+		<org.apache.maven.maven-plugin-api.version>2.0</org.apache.maven.maven-plugin-api.version>
 	</properties>
 </project>

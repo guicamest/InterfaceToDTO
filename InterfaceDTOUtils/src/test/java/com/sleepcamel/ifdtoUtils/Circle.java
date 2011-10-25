@@ -1,7 +1,7 @@
 package com.sleepcamel.ifdtoUtils;
 
 @SuppressWarnings("unused")
-class Circle implements IDrawable{
+public class Circle implements IDrawable{
 
 	private double radius;
 	private String circleProperty1 = "";
@@ -34,5 +34,9 @@ class Circle implements IDrawable{
 	public void calculate() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public String getSomethingThatIsNotInDrawable() {
+		return "SomethingThatIsNotInDrawable";
 	}
 }
