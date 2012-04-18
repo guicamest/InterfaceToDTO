@@ -2,3 +2,8 @@
 .classpath
 .project
 target
+.metadata
+generator/com
+idto-utils/com
+idto-hibernate/com
+idto-jackson/com

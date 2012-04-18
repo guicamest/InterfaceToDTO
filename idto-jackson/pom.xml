@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sleepcamel.ifdtoutils</groupId>
-  <artifactId>InterfaceDTOUtils</artifactId>
+  <artifactId>idto-jackson</artifactId>
   <packaging>jar</packaging>
 
-  <name>interface-dto-utils InterfaceDTOUtils</name>
+  <name>interface-dto-utils JacksonInterfaceDTOUtils</name>
   
 	<parent>
 		<groupId>com.sleepcamel.ifdtoutils</groupId>
@@ -40,36 +40,8 @@
 	</dependency>
 	<dependency>
 		<groupId>${project.groupId}</groupId>
-		<artifactId>core</artifactId>
+		<artifactId>idto-utils</artifactId>
 		<version>${project.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>${project.groupId}</groupId>
-		<artifactId>generator</artifactId>
-		<version>${project.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-lang3</artifactId>
-		<version>${org.apache.commons.commons-lang3.version}</version>
-	</dependency>
-	<!-- For tests  -->
-	<dependency> 
-		<groupId>com.h2database</groupId>
-		<artifactId>h2</artifactId>
-		<version>${com.h2database.h2.version}</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-entitymanager</artifactId>
-		<version>${org.hibernate.hibernate-entitymanager.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>javassist</groupId>
-				<artifactId>javassist</artifactId>
-			</exclusion>
-		</exclusions>
 	</dependency>
   </dependencies>
 </project>

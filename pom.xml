@@ -11,8 +11,10 @@
 	<modules>
 		<module>core</module>
 		<module>generator</module>
-		<module>maven-plugin</module>
-		<module>InterfaceDTOUtils</module>
+		<module>idto-mvn-plugin</module>
+		<module>idto-utils</module>
+		<module>idto-hibernate</module>
+		<module>idto-jackson</module>
 	</modules>
 
 	<build>
@@ -78,7 +80,7 @@
 						<check>
 							<branchRate>60</branchRate>
 							<lineRate>60</lineRate>
-							<haltOnFailure>true</haltOnFailure>
+							<haltOnFailure>false</haltOnFailure>
 							<totalBranchRate>80</totalBranchRate>
 							<totalLineRate>80</totalLineRate>
 							<packageLineRate>85</packageLineRate>
