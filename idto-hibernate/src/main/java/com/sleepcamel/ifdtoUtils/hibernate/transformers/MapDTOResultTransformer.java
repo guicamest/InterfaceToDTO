@@ -69,7 +69,7 @@ public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 
 	private Object getObjectValue(T result, Integer methodIndex) {
 		try{
-			Method method = dtoMethods.get(methodIndex);
+			Method method = transformer.getDtoMethods().get(methodIndex);
 			return method.invoke(result);
 		}catch(Exception e){
 			throw new DTOUtilsException(e);

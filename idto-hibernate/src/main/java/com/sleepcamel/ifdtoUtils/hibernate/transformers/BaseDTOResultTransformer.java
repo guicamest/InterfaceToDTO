@@ -1,14 +1,8 @@
 package com.sleepcamel.ifdtoUtils.hibernate.transformers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.hibernate.transform.ResultTransformer;
 
-import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
-import com.sleepcamel.ifdtoutils.DTOClassGenerator;
-import com.sleepcamel.ifdtoutils.methodUtil.InterfaceJavaMethodsUtil;
+import com.sleepcamel.ifdtoUtils.ArrayInterfaceDTOTransformer;
 
 abstract public class BaseDTOResultTransformer<T> implements ResultTransformer {
 
@@ -16,33 +10,15 @@ abstract public class BaseDTOResultTransformer<T> implements ResultTransformer {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	protected ArrayInterfaceDTOTransformer<T> transformer;
 
-	private Class<T> interfaceClass;
-	private Class<? extends Object> dtoClass;
-	protected List<Method> dtoMethods;
-	
 	public BaseDTOResultTransformer(Class<T> interfaceClass) {
-		this.interfaceClass = interfaceClass;
-		T dto = InterfaceDTOUtils.getDto(interfaceClass, true, true);
-		dtoClass = dto.getClass();
-		dtoMethods = InterfaceJavaMethodsUtil.instance().getExportableMethods(dtoClass, MethodPosComparator.instance());
+		transformer = new ArrayInterfaceDTOTransformer<T>(interfaceClass);
 	}
 	
 	@Override
 	public Object transformTuple(Object[] selectObjects, String[] selectAliases) {
-		T dto = InterfaceDTOUtils.getDto(interfaceClass, true, true);
-		int qty = selectObjects.length;
-
-		// Fill fields
-		for(int i = 0; i < qty; i++){
-			try {
-				Field field = dtoClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(dtoMethods.get(i).getName()));
-				field.set(dto, selectObjects[i]);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return dto;
+		return transformer.transformArrayToDTO(selectObjects);
 	}
 
 }

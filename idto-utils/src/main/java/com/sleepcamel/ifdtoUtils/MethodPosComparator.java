@@ -1,4 +1,4 @@
-package com.sleepcamel.ifdtoUtils.hibernate.transformers;
+package com.sleepcamel.ifdtoUtils;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
