@@ -1,6 +1,6 @@
 package com.sleepcamel.ifdtoUtils.valueConverters;
 
-public class LongValueConverter implements IValueConverter<Long> {
+public class LongValueConverter implements IValueConverter<String, Long> {
 
 	public static LongValueConverter INSTANCE = new LongValueConverter();
 	

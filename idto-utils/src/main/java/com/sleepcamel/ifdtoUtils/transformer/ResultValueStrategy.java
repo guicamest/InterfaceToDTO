@@ -1,4 +1,4 @@
-package com.sleepcamel.ifdtoUtils.hibernate.transformers;
+package com.sleepcamel.ifdtoUtils.transformer;
 
 
 public class ResultValueStrategy implements ILastValueStrategy {

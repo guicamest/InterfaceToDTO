@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.sleepcamel.ifdtoUtils.exception.DTOUtilsException;
+import com.sleepcamel.ifdtoUtils.transformer.ILastValueStrategy;
+import com.sleepcamel.ifdtoUtils.transformer.ResultListValueStrategy;
+import com.sleepcamel.ifdtoUtils.transformer.ResultValueStrategy;
 
 public class MapDTOResultTransformer<T> extends BaseDTOResultTransformer<T> {
 

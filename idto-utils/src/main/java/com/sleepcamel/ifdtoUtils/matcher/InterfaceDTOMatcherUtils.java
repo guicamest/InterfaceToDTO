@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sleepcamel.ifdtoUtils.ArrayInterfaceDTOTransformer;
+import com.sleepcamel.ifdtoUtils.transformer.StringArrayDTOTransformer;
 import com.sleepcamel.ifdtoUtils.valueConverters.IValueConverter;
 
 
@@ -18,10 +18,10 @@ public class InterfaceDTOMatcherUtils<T> {
 	protected Class<T> interfaceClass;
 	private String source;
 	private Pattern pattern;
-	private ArrayInterfaceDTOTransformer<T> transformer;
+	private StringArrayDTOTransformer<T> transformer;
 
 	protected InterfaceDTOMatcherUtils(Class<T> interfaceClass) {
-		transformer = new ArrayInterfaceDTOTransformer<T>(interfaceClass, true, true);
+		transformer = new StringArrayDTOTransformer<T>(interfaceClass, true);
 	}
 
 	public InterfaceDTOMatcherUtils<T> fromString(String sourceString) {
@@ -44,18 +44,19 @@ public class InterfaceDTOMatcherUtils<T> {
 		
 		while(matcher.find()){
 			int groupCount = matcher.groupCount();
-			Object [] groups = new Object[groupCount];
+			String [] groups = new String[groupCount];
 			for(int i=0; i < groupCount; i++){
 				groups[i] = matcher.group(i+1);
 			}
-			matches.add(transformer.transformArrayToDTO(groups));
+			matches.add(transformer.transformToDTO(groups));
 		}
 
 		return matches;
 	}
 
-	public <E> void converter(Class<E> clazz, IValueConverter<E> valueConverter) {
+	public <E> InterfaceDTOMatcherUtils<T> converter(Class<E> clazz, IValueConverter<String, E> valueConverter) {
 		transformer.addCustomValueConverter(clazz, valueConverter);
+		return this;
 	}
 
 }

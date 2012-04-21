@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.sleepcamel.ifdtoUtils.valueConverters.IValueConverter;
 
-public class IntefaceDTOMatcherUtilTest {
+public class InterfaceDTOMatcherUtilTest {
 
 	private static final String SIMPLE_EXAMPLE = "<option[^>]+value=\"([^\"]*+)\"[^>]*+>([^<]++)</option>";
 	private static final String EMPTY_OPTIONAL_VALUE = "<tr[^>]*+>[^<]*+<td[^>]*+>([^<]*+)</td[^>]*+>[^<]*+<td[^>]*+>([^<]*+)</td[^>]*+>[^<]*+(?:<td[^>]*+>([^<]*+)</td[^>]*+>)?[^<]*+</tr[^>]*+>";
@@ -137,7 +137,7 @@ public class IntefaceDTOMatcherUtilTest {
 		assertNotNull(htmlString);
 		InterfaceDTOMatcherUtils<INameAndAliases> nameWithAliasesMatcher = InterfaceDTOMatcherUtils.getFor(INameAndAliases.class);
 		
-		nameWithAliasesMatcher.converter(String[].class,new IValueConverter<String[]>() {
+		nameWithAliasesMatcher.converter(String[].class,new IValueConverter<String, String[]>() {
 			public String[] convertValue(String s) {
 				return s.split(" and ");
 			}

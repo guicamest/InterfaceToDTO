@@ -33,6 +33,12 @@
       <version>${junit.junit.version}</version>
       <scope>test</scope>
     </dependency>
+	<dependency> 
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>${com.h2database.h2.version}</version>
+		<scope>test</scope>
+	</dependency>
 	<dependency>
 		<groupId>${project.groupId}</groupId>
 		<artifactId>idto-utils</artifactId>
@@ -42,13 +48,6 @@
 		<groupId>org.apache.commons</groupId>
 		<artifactId>commons-lang3</artifactId>
 		<version>${org.apache.commons.commons-lang3.version}</version>
-	</dependency>
-	<!-- For tests  -->
-	<dependency> 
-		<groupId>com.h2database</groupId>
-		<artifactId>h2</artifactId>
-		<version>${com.h2database.h2.version}</version>
-		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.hibernate</groupId>

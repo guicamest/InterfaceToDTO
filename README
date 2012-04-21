@@ -3,7 +3,7 @@ InterfaceToDTO
 
 The goal of this project is to help the developer in creating DTOs for the
 domain entities and filling their information.
-In order to do so, an Interface approach is used. The Inferface should provide
+In order to do so, an Interface approach is used. The Interface should provide
 the getters for the DTO's fields. DTO creation and information passing from
 the domain entity to the DTO is done by this utilities.
 

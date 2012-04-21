@@ -27,12 +27,6 @@
 	</build>
 	
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.junit.version}</version>
-      <scope>test</scope>
-    </dependency>
 	<dependency>
 		<groupId>${project.groupId}</groupId>
 		<artifactId>core</artifactId>
@@ -42,6 +36,19 @@
 		<groupId>${project.groupId}</groupId>
 		<artifactId>generator</artifactId>
 		<version>${project.version}</version>
+	</dependency>
+	<!-- For tests  -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+	<dependency> 
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>${com.h2database.h2.version}</version>
+		<scope>test</scope>
 	</dependency>
   </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package com.sleepcamel.ifdtoUtils.hibernate.transformers;
+package com.sleepcamel.ifdtoUtils.transformer;
 
 import java.util.ArrayList;
 import java.util.List;

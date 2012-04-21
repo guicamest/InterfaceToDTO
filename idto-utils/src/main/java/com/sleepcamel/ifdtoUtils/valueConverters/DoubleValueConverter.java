@@ -1,6 +1,6 @@
 package com.sleepcamel.ifdtoUtils.valueConverters;
 
-public class DoubleValueConverter implements IValueConverter<Double> {
+public class DoubleValueConverter implements IValueConverter<String, Double> {
 
 	public static DoubleValueConverter INSTANCE = new DoubleValueConverter();
 	

@@ -91,7 +91,7 @@ public class HibernateDTOUtilsTest {
 	}
 	
 	@Test
-	public void testSimplifiedUser(){
+	public void testList(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user order by user.id";
 		
 		Query query = session.createQuery(hql);
@@ -104,7 +104,7 @@ public class HibernateDTOUtilsTest {
 	}
 	
 	@Test
-	public void testSortSimplifiedUser(){
+	public void testSortList(){
 		String hql = "select user.name, user.avatar, user.location, user.lastName from User user order by user.id";
 		Query query = session.createQuery(hql);
 		

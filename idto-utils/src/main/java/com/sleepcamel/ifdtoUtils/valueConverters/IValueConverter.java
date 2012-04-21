@@ -1,7 +1,7 @@
 package com.sleepcamel.ifdtoUtils.valueConverters;
 
-public interface IValueConverter<T> {
+public interface IValueConverter<F,T> {
 
-	T convertValue(String s);
+	T convertValue(F s);
 
 }
