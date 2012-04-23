@@ -21,6 +21,7 @@ abstract public class BaseInterfaceDTOTransformer<T, RV> {
 	private Map<Class<?>, IValueConverter<?,?>> customValueConverters = new HashMap<Class<?>, IValueConverter<?,?>>();
 	
 	static protected Map<Class<?>, IValueConverter<?,?>> valueConverters = new HashMap<Class<?>, IValueConverter<?,?>>();
+	static protected Map<Class<?>, IValueConverter<?,?>> superClassValueConverters = new HashMap<Class<?>, IValueConverter<?,?>>();
 	
 	public BaseInterfaceDTOTransformer(Class<T> interfaceClass) {
 		this(interfaceClass, false, false);
@@ -53,6 +54,17 @@ abstract public class BaseInterfaceDTOTransformer<T, RV> {
 		if ( iValueConverter == null && useDefaultConverters ){
 			iValueConverter = valueConverters.get(type);
 		}
+		if ( iValueConverter == null ){
+			iValueConverter = getSuperClassValueConverter(type);
+		}
 		return iValueConverter;
+	}
+
+	private IValueConverter<?, ?> getSuperClassValueConverter(Class<?> type) {
+		for(Class<?> registeredClass:superClassValueConverters.keySet()){
+			if ( registeredClass.isAssignableFrom(type) )
+				return superClassValueConverters.get(registeredClass);
+		}
+		return null;
 	}
 }

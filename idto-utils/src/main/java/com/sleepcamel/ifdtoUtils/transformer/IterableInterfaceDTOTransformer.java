@@ -3,23 +3,11 @@ package com.sleepcamel.ifdtoUtils.transformer;
 import java.lang.reflect.Field;
 
 import com.sleepcamel.ifdtoUtils.InterfaceDTOUtils;
-import com.sleepcamel.ifdtoUtils.valueConverters.DoubleValueConverter;
 import com.sleepcamel.ifdtoUtils.valueConverters.IValueConverter;
-import com.sleepcamel.ifdtoUtils.valueConverters.IntValueConverter;
-import com.sleepcamel.ifdtoUtils.valueConverters.LongValueConverter;
 import com.sleepcamel.ifdtoutils.DTOClassGenerator;
 
 abstract public class IterableInterfaceDTOTransformer<T, I> extends BaseInterfaceDTOTransformer<T, I>{
 
-	static{
-		valueConverters.put(int.class, IntValueConverter.INSTANCE);
-		valueConverters.put(Integer.class, IntValueConverter.INSTANCE);
-		valueConverters.put(long.class, LongValueConverter.INSTANCE);
-		valueConverters.put(Long.class, LongValueConverter.INSTANCE);
-		valueConverters.put(double.class, DoubleValueConverter.INSTANCE);
-		valueConverters.put(Double.class, DoubleValueConverter.INSTANCE);
-	}
-	
 	public IterableInterfaceDTOTransformer(Class<T> interfaceClass) {
 		super(interfaceClass, false, false);
 	}
@@ -40,10 +28,11 @@ abstract public class IterableInterfaceDTOTransformer<T, I> extends BaseInterfac
 				Field field = dtoClass.getDeclaredField(DTOClassGenerator.getFieldNameFromMethod(dtoMethods.get(i).getName()));
 				Object value = getValue(i, iterable);
 				if ( useConverters() ){
-					IValueConverter iValueConverter = getValueConverter(field.getType());
+					Class<?> type = field.getType();
+					IValueConverter valueConverter = getValueConverter(type);
 
-					if ( iValueConverter != null ){
-						value = iValueConverter.convertValue(value);
+					if ( valueConverter != null ){
+						value = valueConverter.convertValue(type, value);
 					}
 				}
 				field.set(dto, value);

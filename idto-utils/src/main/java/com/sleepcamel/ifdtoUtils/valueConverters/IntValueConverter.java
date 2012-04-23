@@ -7,7 +7,7 @@ public class IntValueConverter implements IValueConverter<String, Integer> {
 	private IntValueConverter() {}
 	
 	@Override
-	public Integer convertValue(String s) {
+	public Integer convertValue(Class<Integer> c, String s) {
 		return Integer.parseInt(s);
 	}
 

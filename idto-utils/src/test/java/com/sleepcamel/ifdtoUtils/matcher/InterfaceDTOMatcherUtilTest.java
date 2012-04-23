@@ -1,8 +1,8 @@
 package com.sleepcamel.ifdtoUtils.matcher;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,8 +17,9 @@ import com.sleepcamel.ifdtoUtils.valueConverters.IValueConverter;
 
 public class InterfaceDTOMatcherUtilTest {
 
+	private static final String ENUM_CONVERTER_PATTERN = "<tr\\s+class=\"nationality, name\">\\s+<td>([^<]+)</td>\\s+<td>([^<]+)</td>\\s+</tr>";
 	private static final String SIMPLE_EXAMPLE = "<option[^>]+value=\"([^\"]*+)\"[^>]*+>([^<]++)</option>";
-	private static final String EMPTY_OPTIONAL_VALUE = "<tr[^>]*+>[^<]*+<td[^>]*+>([^<]*+)</td[^>]*+>[^<]*+<td[^>]*+>([^<]*+)</td[^>]*+>[^<]*+(?:<td[^>]*+>([^<]*+)</td[^>]*+>)?[^<]*+</tr[^>]*+>";
+	private static final String EMPTY_OPTIONAL_VALUE = "<tr>[^<]*+<td[^>]*+>([^<]*+)</td[^>]*+>[^<]*+<td[^>]*+>([^<]*+)</td[^>]*+>[^<]*+(?:<td[^>]*+>([^<]*+)</td[^>]*+>)?[^<]*+</tr[^>]*+>";
 	private static final String OPT_VALUE_IN_MIDDLE = "<span[^>]+class=\"name\"[^>]*+>([^<]+)</span>[^<]*+(?:<span[^>]+class=\"middleName\"[^>]*+>([^<]+)</span>)?[^<]*+<span[^>]+class=\"lastName\"[^>]*+>([^<]+)</span>";
 	private static final String DIFFERENT_TYPES_PATTERN = "<span[^>]+class=\"name\"[^>]*+>([^<]+)</span>[^<]*+<span[^>]+class=\"age\"[^>]*+>([^<]+)</span>[^<]*+<span[^>]+class=\"agemillis\"[^>]*+>([^<]+)</span>[^<]*+<span[^>]+class=\"avgpoopsyear\"[^>]*+>([^<]+)</span>[^<]*+<span[^>]+class=\"ownerage\"[^>]*+>([^<]+)</span>[^<]*+<span[^>]+class=\"owneragemillis\"[^>]*+>([^<]+)</span>[^<]*+<span[^>]+class=\"avgfoodyear\"[^>]*+>([^<]+)</span>";
 	private static final String CUSTOM_CONVERTER_PATTERN = "<span[^>]+class=\"nameAndAliases\"[^>]*+>([^-]++)-\\s*([^<]+)</span>";
@@ -138,7 +139,7 @@ public class InterfaceDTOMatcherUtilTest {
 		InterfaceDTOMatcherUtils<INameAndAliases> nameWithAliasesMatcher = InterfaceDTOMatcherUtils.getFor(INameAndAliases.class);
 		
 		nameWithAliasesMatcher.converter(String[].class,new IValueConverter<String, String[]>() {
-			public String[] convertValue(String s) {
+			public String[] convertValue(Class<String[]> c, String s) {
 				return s.split(" and ");
 			}
 		});
@@ -154,6 +155,24 @@ public class InterfaceDTOMatcherUtilTest {
 		assertEquals(aliases[1], "Charly");
 		assertEquals(aliases[2], "D");
 		assertEquals(aliases[3], "JCD");
+	}
+
+	@Test
+	public void testEnumConverter(){
+		assertNotNull(htmlString);
+		InterfaceDTOMatcherUtils<INameAndNationalities> nameNationalitiesMatcher = InterfaceDTOMatcherUtils.getFor(INameAndNationalities.class);
+		
+		List<INameAndNationalities> namesAndNations = nameNationalitiesMatcher.fromString(htmlString).withPattern(ENUM_CONVERTER_PATTERN).list();
+
+		assertEquals(namesAndNations.size(), 3);
+		assertEquals(namesAndNations.get(0).getName(),"Mark Aton");
+		assertEquals(namesAndNations.get(0).getNationality(),ENationality.SP);
+		
+		assertEquals(namesAndNations.get(1).getName(),"Pepe Lorenzo");
+		assertEquals(namesAndNations.get(1).getNationality(),ENationality.AR);
+		
+		assertEquals(namesAndNations.get(2).getName(),"Back2D Keys");
+		assertEquals(namesAndNations.get(2).getNationality(),ENationality.US);
 	}
 }
 
@@ -188,3 +207,10 @@ interface IDog{
 	Long getOwnersInMillis();
 	Double getAvgFoodPerYear();
 }
+
+interface INameAndNationalities{
+	String getName();
+	ENationality getNationality();
+}
+
+enum ENationality {AR, BR, IT, SP, US}

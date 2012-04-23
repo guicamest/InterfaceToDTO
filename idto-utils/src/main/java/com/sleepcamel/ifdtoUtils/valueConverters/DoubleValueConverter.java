@@ -7,7 +7,7 @@ public class DoubleValueConverter implements IValueConverter<String, Double> {
 	private DoubleValueConverter() {}
 	
 	@Override
-	public Double convertValue(String s) {
+	public Double convertValue(Class<Double> c, String s) {
 		return Double.parseDouble(s);
 	}
 

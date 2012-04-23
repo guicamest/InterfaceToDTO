@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -17,9 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class InterfaceDTOSqlUtilTest {
@@ -27,20 +24,6 @@ public class InterfaceDTOSqlUtilTest {
 	private static Connection connection;
 	private static java.util.Date macDoB;
 	private static java.util.Date jennyDoB;
-
-	@Before
-	public void openConnection() throws IOException, InstantiationException,
-			IllegalAccessException, ClassNotFoundException, SQLException {
-		Class.forName("org.h2.Driver").newInstance();
-		String connectionURL = "jdbc:h2:mem:testdb";
-
-		connection = DriverManager.getConnection(connectionURL, "sa", "");
-	}
-
-	@After
-	public void closeConnection() throws SQLException {
-		connection.close();
-	}
 
 	@Test
 	@SuppressWarnings("deprecation")
@@ -153,7 +136,6 @@ public class InterfaceDTOSqlUtilTest {
 		
 		List<IUserWithPet> usersWithPets = InterfaceDTOSqlUtils.getFor(IUserWithPet.class)
 																.fromQuery(queryString)
-																.converter(PetType.class, PetTypeConverter.INSTANCE)
 																.withConnection(connection)
 																.list().result();
 		
@@ -204,7 +186,6 @@ public class InterfaceDTOSqlUtilTest {
 
 		Map<String, Map<PetType, IUserPetTypeCount>> userPetTypeCounts = InterfaceDTOSqlUtils.getFor(IUserPetTypeCount.class)
 															.fromQuery(queryString)
-															.converter(PetType.class, PetTypeConverter.INSTANCE)
 															.withConnection(connection)
 															.map(PetType.class, 1).key(String.class, 0).result();
 		
@@ -223,8 +204,8 @@ public class InterfaceDTOSqlUtilTest {
 		assertEquals(userPetTypeCounts.get("mac").get(PetType.CAT).getCount(), 2);
 	}
 
-	@BeforeClass
-	public static void createDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	@Before
+	public void createDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver").newInstance();
 		String connectionURL = "jdbc:h2:mem:testdb";
 
@@ -301,9 +282,9 @@ public class InterfaceDTOSqlUtilTest {
 		
 		statement.close();
 	}
-	
-	@AfterClass
-	public static void dropDB() throws SQLException {
+
+	@After
+	public void closeConnection() throws SQLException {
 		connection.close();
 	}
 }

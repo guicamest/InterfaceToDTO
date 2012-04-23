@@ -9,7 +9,7 @@ public class PetTypeConverter implements IValueConverter<String, PetType> {
 	private PetTypeConverter() {}
 
 	@Override
-	public PetType convertValue(String s) {
+	public PetType convertValue(Class<PetType> c, String s) {
 		return PetType.valueOf(s);
 	}
 	
